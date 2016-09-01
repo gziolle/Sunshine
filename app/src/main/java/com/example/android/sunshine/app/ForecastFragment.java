@@ -2,6 +2,7 @@ package com.example.android.sunshine.app;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -18,6 +19,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -37,11 +39,11 @@ import java.util.Arrays;
  */
 public class ForecastFragment extends Fragment {
     private static final String TAG = ForecastFragment.class.getSimpleName();
-    ;
 
     private static final int MY_PERMISSIONS_REQUEST_INTERNET = 1;
     public ArrayAdapter<String> mForecastAdapter;
     public ArrayList<String> mForecastData;
+    public ListView mListView;
 
     public ForecastFragment() {
     }
@@ -67,8 +69,19 @@ public class ForecastFragment extends Fragment {
         mForecastData.add("String 7");
 
         mForecastAdapter = new ArrayAdapter<>(getActivity(), R.layout.list_item_forecast, R.id.list_item_forecast_textView, mForecastData);
-        ListView listView = (ListView) rootView.findViewById(R.id.listView_forecast);
-        listView.setAdapter(mForecastAdapter);
+        mListView = (ListView) rootView.findViewById(R.id.listView_forecast);
+        mListView.setAdapter(mForecastAdapter);
+
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                String forecast = (String) parent.getItemAtPosition(position);
+                Intent intent = new Intent(getActivity(), DetailActivity.class);
+                intent.putExtra("weather", forecast);
+                startActivity(intent);
+            }
+        });
 
         return rootView;
     }
