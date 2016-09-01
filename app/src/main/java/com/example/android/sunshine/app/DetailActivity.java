@@ -19,13 +19,15 @@ public class DetailActivity extends AppCompatActivity {
         Intent intent = getIntent();
         Bundle bundle = new Bundle();
 
-        if (intent != null && intent.hasExtra("weather")) {
-            String message = intent.getStringExtra("weather");
-            bundle.putString("weather", message);
+
+        //If the intent exists and has extras, put them into a bundle.
+        if (intent != null && intent.hasExtra(ForecastFragment.DETAILS_EXTRAS)) {
+            String message = intent.getStringExtra(ForecastFragment.DETAILS_EXTRAS);
+            bundle.putString(ForecastFragment.DETAILS_EXTRAS, message);
         }
 
         if (savedInstanceState == null) {
-            //Pass the intent's extras to the Detail Fragment
+            //Set the bundle as the Detail Fragment's arguments
             DetailFragment fragment = new DetailFragment();
             fragment.setArguments(bundle);
             getSupportFragmentManager().beginTransaction()
@@ -50,6 +52,9 @@ public class DetailActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            //Create an Intent to start the Settings Activity.
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
             return true;
         }
 
