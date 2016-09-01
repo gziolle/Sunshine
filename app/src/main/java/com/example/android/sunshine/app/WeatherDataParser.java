@@ -27,21 +27,31 @@ public class WeatherDataParser {
         calendar.add(Calendar.DATE, days);
 
         Date time = calendar.getTime();
-        SimpleDateFormat date = new SimpleDateFormat("EEE MMM dd");
+        SimpleDateFormat date = new SimpleDateFormat("EEE, MMM dd");
         //Format the date
         return date.format(time);
     }
 
-    private String formatHighLows(int high, int low) {
+    private String formatHighLows(int high, int low, String temperatureUnits) {
         // For presentation, assume the user doesn't care about tenths of a degree.
-        long roundedHigh = Math.round(high);
-        long roundedLow = Math.round(low);
+
+        long roundedHigh;
+        long roundedLow;
+
+        //Convert the temperature to Fahrenheit unit.
+        if ("imperial".equals(temperatureUnits)) {
+            roundedHigh = Math.round((high * 1.8) + 32);
+            roundedLow = Math.round((low * 1.8) + 32);
+        } else { // Keep it as Celsius
+            roundedHigh = Math.round(high);
+            roundedLow = Math.round(low);
+        }
 
         String highLowStr = roundedHigh + "/" + roundedLow;
         return highLowStr;
     }
 
-    public String[] getWeatherDataFromJsonString(String forecast) throws JSONException {
+    public String[] getWeatherDataFromJsonString(String forecast, String temperatureUnits) throws JSONException {
 
         String OWM_LIST = "list";
         String OWM_WEATHER = "weather";
@@ -71,7 +81,7 @@ public class WeatherDataParser {
             int lowTemp = temperatures.getInt(OWM_MIN);
 
             //Format the temperatures string
-            String highAndLow = formatHighLows(highTemp, lowTemp);
+            String highAndLow = formatHighLows(highTemp, lowTemp, temperatureUnits);
             dayWeatherArray[k] = day + " - " + description + " - " + highAndLow;
         }
         return dayWeatherArray;

@@ -31,6 +31,7 @@ public class SettingsFragment extends PreferenceFragment
         addPreferencesFromResource(R.xml.pref_general);
 
         bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_location_key)));
+        bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_temperature_units_key)));
     }
 
     @Override

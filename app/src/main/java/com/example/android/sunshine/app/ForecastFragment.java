@@ -155,7 +155,6 @@ public class ForecastFragment extends Fragment {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
             //Read the user's preference value.
             String preference = preferences.getString(getString(R.string.pref_location_key), PREF_LOCATION_DEFAULT_VALUE);
-            Log.v(TAG, "PREF_LOCATION_KEY = " + preference);
             //Start the AsyncTask related to the weather fetching.
             new FetchWeatherTask().execute(preference);
         } else {
@@ -165,6 +164,12 @@ public class ForecastFragment extends Fragment {
 
     class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
 
+        private String OWM_AUTHORITY = "api.openweathermap.org";
+        private String OWM_LOCATION = "q";
+        private String OWM_UNITS = "units";
+        private String OWM_APP_ID = "appid";
+        private String OWM_MODE = "mode";
+        private String OWM_DAYS_COUNT = "cnt";
 
         private static final String TAG = "FetchWeatherTask";
 
@@ -187,13 +192,13 @@ public class ForecastFragment extends Fragment {
                 //q=94043,us&units=metric&appid=b6fb1780ef33770bd276bea15e7ea414&mode=json&cnt=7
                 Uri.Builder builder = new Uri.Builder();
                 builder.scheme("http");
-                builder.authority("api.openweathermap.org");
+                builder.authority(OWM_AUTHORITY);
                 builder.appendPath("data").appendPath("2.5").appendPath("forecast").appendPath("daily");
-                builder.appendQueryParameter("q", postalCode);
-                builder.appendQueryParameter("units", "metric");
-                builder.appendQueryParameter("appid", "b6fb1780ef33770bd276bea15e7ea414");
-                builder.appendQueryParameter("mode", "json");
-                builder.appendQueryParameter("cnt", "7");
+                builder.appendQueryParameter(OWM_LOCATION, postalCode);
+                builder.appendQueryParameter(OWM_UNITS, getString(R.string.pref_temperature_units_default));
+                builder.appendQueryParameter(OWM_APP_ID, "b6fb1780ef33770bd276bea15e7ea414");
+                builder.appendQueryParameter(OWM_MODE, "json");
+                builder.appendQueryParameter(OWM_DAYS_COUNT, "7");
 
                 URL url = new URL(builder.build().toString());
 
@@ -228,7 +233,12 @@ public class ForecastFragment extends Fragment {
                 forecastJsonStr = buffer.toString();
                 try {
                     WeatherDataParser parser = new WeatherDataParser();
-                    forecastArray = parser.getWeatherDataFromJsonString(forecastJsonStr);
+                    //Get the user's shared preferences
+                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                    //Get the temperature unit
+                    String temperatureUnits = preferences.getString(getString(R.string.pref_temperature_units_key), getString(R.string.pref_temperature_units_default));
+                    //Parse the data based on the temperature unit
+                    forecastArray = parser.getWeatherDataFromJsonString(forecastJsonStr, temperatureUnits);
                 } catch (JSONException e) {
                     Log.e(TAG, "Error on JSON parsing:", e);
                 }
@@ -257,8 +267,10 @@ public class ForecastFragment extends Fragment {
         @Override
         protected void onPostExecute(String[] strings) {
             super.onPostExecute(strings);
-            mForecastAdapter.clear();
-            mForecastAdapter.addAll(Arrays.asList(strings));
+            if (strings != null) {
+                mForecastAdapter.clear();
+                mForecastAdapter.addAll(Arrays.asList(strings));
+            }
         }
     }
 }

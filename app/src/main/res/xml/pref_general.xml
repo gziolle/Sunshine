@@ -6,8 +6,14 @@
         android:title="@string/pref_location_title"
         android:key="@string/pref_location_key"
         android:inputType="text"
-        android:singleLine="true">
+        android:singleLine="true" />
 
-    </EditTextPreference>
+    <ListPreference
+        android:key="@string/pref_temperature_units_key"
+        android:title="@string/pref_temperature_units_title"
+        android:entries="@array/temperature_units"
+        android:entryValues="@array/temperature_units_values"
+        android:dialogTitle="@string/pref_temperature_units_title"
+        android:defaultValue="@string/pref_temperature_units_default" />
 
 </PreferenceScreen>
