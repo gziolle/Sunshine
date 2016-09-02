@@ -2,12 +2,15 @@ package com.example.android.sunshine.app;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -18,6 +21,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -37,11 +41,13 @@ import java.util.Arrays;
  */
 public class ForecastFragment extends Fragment {
     private static final String TAG = ForecastFragment.class.getSimpleName();
-    ;
+
+    private static final String PREF_LOCATION_DEFAULT_VALUE = "location";
+    public static final String DETAILS_EXTRAS = "weather";
 
     private static final int MY_PERMISSIONS_REQUEST_INTERNET = 1;
     public ArrayAdapter<String> mForecastAdapter;
-    public ArrayList<String> mForecastData;
+    public ListView mListView;
 
     public ForecastFragment() {
     }
@@ -57,20 +63,37 @@ public class ForecastFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        mForecastData = new ArrayList<>();
-        mForecastData.add("String 1");
-        mForecastData.add("String 2");
-        mForecastData.add("String 3");
-        mForecastData.add("String 4");
-        mForecastData.add("String 5");
-        mForecastData.add("String 6");
-        mForecastData.add("String 7");
+        mForecastAdapter = new ArrayAdapter<>(getActivity(), R.layout.list_item_forecast, R.id.list_item_forecast_textView, new ArrayList<String>());
+        mListView = (ListView) rootView.findViewById(R.id.listView_forecast);
+        mListView.setAdapter(mForecastAdapter);
 
-        mForecastAdapter = new ArrayAdapter<>(getActivity(), R.layout.list_item_forecast, R.id.list_item_forecast_textView, mForecastData);
-        ListView listView = (ListView) rootView.findViewById(R.id.listView_forecast);
-        listView.setAdapter(mForecastAdapter);
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //Create an intent to start the Detail Activity for a list item.
+                String forecast = (String) parent.getItemAtPosition(position);
+                Intent intent = new Intent(getActivity(), DetailActivity.class);
+                intent.putExtra(DETAILS_EXTRAS, forecast);
+                startActivity(intent);
+            }
+        });
 
         return rootView;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (ContextCompat.checkSelfPermission(getActivity(),
+                Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED) {
+            updateWeather();
+        } else {
+            //Ask the user for internet permission.
+            ActivityCompat.requestPermissions(getActivity(),
+                    new String[]{Manifest.permission.READ_CONTACTS},
+                    MY_PERMISSIONS_REQUEST_INTERNET);
+        }
+
     }
 
     @Override
@@ -84,21 +107,15 @@ public class ForecastFragment extends Fragment {
 
         switch (menuItem.getItemId()) {
             case R.id.action_refresh:
-                //TODO
-                //Make a check for internet connection before starting the task.
-                ConnectivityManager manager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-                NetworkInfo networkInfo = manager.getActiveNetworkInfo();
-
-                if (networkInfo != null && networkInfo.isConnected()) {
-                    if (ContextCompat.checkSelfPermission(getActivity(),
-                            Manifest.permission.INTERNET)
-                            == PackageManager.PERMISSION_GRANTED) {
-                        new FetchWeatherTask().execute("94043,us");
-                    } else {
-                        ActivityCompat.requestPermissions(getActivity(),
-                                new String[]{Manifest.permission.READ_CONTACTS},
-                                MY_PERMISSIONS_REQUEST_INTERNET);
-                    }
+                //Check whether it has the permission to use the internet connection.
+                if (ContextCompat.checkSelfPermission(getActivity(),
+                        Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED) {
+                    updateWeather();
+                } else {
+                    //Ask the user for internet permission.
+                    ActivityCompat.requestPermissions(getActivity(),
+                            new String[]{Manifest.permission.READ_CONTACTS},
+                            MY_PERMISSIONS_REQUEST_INTERNET);
                 }
                 break;
         }
@@ -113,8 +130,7 @@ public class ForecastFragment extends Fragment {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    //Start the AsyncTask related to the weather fetching.
-                    new FetchWeatherTask().execute("94043,us");
+                    updateWeather();
                 } else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
@@ -128,8 +144,32 @@ public class ForecastFragment extends Fragment {
         }
     }
 
+    public void updateWeather() {
+        //Make a check for internet connection before starting the task.
+        ConnectivityManager manager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = manager.getActiveNetworkInfo();
+
+        //Check if the internet permission is active.
+        if (networkInfo != null && networkInfo.isConnected()) {
+            //Get the user's shared preferences through the SharedPreferences file.
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            //Read the user's preference value.
+            String preference = preferences.getString(getString(R.string.pref_location_key), PREF_LOCATION_DEFAULT_VALUE);
+            //Start the AsyncTask related to the weather fetching.
+            new FetchWeatherTask().execute(preference);
+        } else {
+            Log.e(TAG, "Can't connect to the internet");
+        }
+    }
+
     class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
 
+        private String OWM_AUTHORITY = "api.openweathermap.org";
+        private String OWM_LOCATION = "q";
+        private String OWM_UNITS = "units";
+        private String OWM_APP_ID = "appid";
+        private String OWM_MODE = "mode";
+        private String OWM_DAYS_COUNT = "cnt";
 
         private static final String TAG = "FetchWeatherTask";
 
@@ -152,13 +192,13 @@ public class ForecastFragment extends Fragment {
                 //q=94043,us&units=metric&appid=b6fb1780ef33770bd276bea15e7ea414&mode=json&cnt=7
                 Uri.Builder builder = new Uri.Builder();
                 builder.scheme("http");
-                builder.authority("api.openweathermap.org");
+                builder.authority(OWM_AUTHORITY);
                 builder.appendPath("data").appendPath("2.5").appendPath("forecast").appendPath("daily");
-                builder.appendQueryParameter("q", postalCode);
-                builder.appendQueryParameter("units", "metric");
-                builder.appendQueryParameter("appid", "b6fb1780ef33770bd276bea15e7ea414");
-                builder.appendQueryParameter("mode", "json");
-                builder.appendQueryParameter("cnt", "7");
+                builder.appendQueryParameter(OWM_LOCATION, postalCode);
+                builder.appendQueryParameter(OWM_UNITS, getString(R.string.pref_temperature_units_default));
+                builder.appendQueryParameter(OWM_APP_ID, "b6fb1780ef33770bd276bea15e7ea414");
+                builder.appendQueryParameter(OWM_MODE, "json");
+                builder.appendQueryParameter(OWM_DAYS_COUNT, "7");
 
                 URL url = new URL(builder.build().toString());
 
@@ -193,12 +233,15 @@ public class ForecastFragment extends Fragment {
                 forecastJsonStr = buffer.toString();
                 try {
                     WeatherDataParser parser = new WeatherDataParser();
-                    forecastArray = parser.getWeatherDataFromJsonString(forecastJsonStr);
+                    //Get the user's shared preferences
+                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                    //Get the temperature unit
+                    String temperatureUnits = preferences.getString(getString(R.string.pref_temperature_units_key), getString(R.string.pref_temperature_units_default));
+                    //Parse the data based on the temperature unit
+                    forecastArray = parser.getWeatherDataFromJsonString(forecastJsonStr, temperatureUnits);
                 } catch (JSONException e) {
                     Log.e(TAG, "Error on JSON parsing:", e);
                 }
-
-//                Log.v(TAG, forecastJsonStr);
 
             } catch (Exception e) {
                 Log.e(TAG, "Error: ", e);
@@ -224,8 +267,10 @@ public class ForecastFragment extends Fragment {
         @Override
         protected void onPostExecute(String[] strings) {
             super.onPostExecute(strings);
-            mForecastAdapter.clear();
-            mForecastData.addAll(Arrays.asList(strings));
+            if (strings != null) {
+                mForecastAdapter.clear();
+                mForecastAdapter.addAll(Arrays.asList(strings));
+            }
         }
     }
 }

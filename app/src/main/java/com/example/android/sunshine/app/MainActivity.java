@@ -1,5 +1,9 @@
 package com.example.android.sunshine.app;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -12,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import java.net.URI;
 import java.util.ArrayList;
 
 
@@ -26,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
                     .add(R.id.container, new ForecastFragment())
                     .commit();
         }
+
     }
 
     @Override
@@ -44,10 +50,27 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            //Create an Intent to start the Settings Activity.
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
             return true;
+        } else if (id == R.id.action_map) {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            //Get the user's preferred location through Shared Preferences.
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+            String userLocation = preferences.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default_value));
+
+            //Parse the user's location as a URI in order to send it to the Maps app.
+            //https://developer.android.com/guide/components/intents-common.html#Maps
+            Uri uri = Uri.parse("geo:0,0?").buildUpon().appendQueryParameter("q", userLocation).build();
+            intent.setData(uri);
+
+            //Error handling, in case the device does not have a Map app.
+            if (intent.resolveActivity(getPackageManager()) != null) {
+                startActivity(intent);
+            }
         }
 
         return super.onOptionsItemSelected(item);
     }
-
 }
