@@ -11,7 +11,7 @@ public class WeatherDBHelper extends SQLiteOpenHelper {
 
     //Represents the database version. If new changes are applied to the database or its tables
     //This number must be increased to trigger the onUpgrade method.
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
 
     //Database name that will be used in the file system.
     public static final String DATABASE_NAME = "weather.db";
@@ -45,10 +45,10 @@ public class WeatherDBHelper extends SQLiteOpenHelper {
                     WeatherContract.WeatherEntry.COLUMN_WIND_SPEED + " REAL NOT NULL, " +
                     WeatherContract.WeatherEntry.COLUMN_DEGREES + " REAL NOT NULL, " +
                     //Added the Location ID column as a foreign key
-                    "FOREIGN KEY (" + WeatherContract.WeatherEntry.COLUMN_LOC_KEY + ") REFERENCES " + WeatherContract.LocationEntry._ID + "(" + WeatherContract.LocationEntry._ID + ")," +
+                    "FOREIGN KEY (" + WeatherContract.WeatherEntry.COLUMN_LOC_KEY + ") REFERENCES " + WeatherContract.LocationEntry.TABLE_NAME + "(" + WeatherContract.LocationEntry._ID + ")," +
                     //Added a constraint to have only one weather entry per date per location. In case a new entry for the same date and
                     // location is inserted into the table, it will replace the old entry.
-                    " UNIQUE (" + WeatherContract.WeatherEntry.COLUMN_LOC_KEY + ", " + WeatherContract.WeatherEntry.COLUMN_LOC_KEY + ") ON CONFLICT REPLACE);";
+                    " UNIQUE (" + WeatherContract.WeatherEntry.COLUMN_DATE + ", " + WeatherContract.WeatherEntry.COLUMN_LOC_KEY + ") ON CONFLICT REPLACE);";
 
     public WeatherDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -66,8 +66,8 @@ public class WeatherDBHelper extends SQLiteOpenHelper {
         //Since the tables are used as a cache from a web service instead of
         //user-generated data, we'll drop the tables and create them again.
         //If the tables are filled by user data, you should use the ALTER TABLE command instead.
-        db.execSQL("DROP TABLE IF EXISTS " + WeatherContract.WeatherEntry.TABLE_NAME + ");");
-        db.execSQL("DROP TABLE IF EXISTS " + WeatherContract.LocationEntry.TABLE_NAME + ");");
+        db.execSQL("DROP TABLE IF EXISTS " + WeatherContract.WeatherEntry.TABLE_NAME + ";");
+        db.execSQL("DROP TABLE IF EXISTS " + WeatherContract.LocationEntry.TABLE_NAME + ";");
         onCreate(db);
     }
 }
