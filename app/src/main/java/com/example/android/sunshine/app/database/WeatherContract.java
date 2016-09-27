@@ -124,6 +124,5 @@ public final class WeatherContract {
             else
                 return 0;
         }
-
     }
 }

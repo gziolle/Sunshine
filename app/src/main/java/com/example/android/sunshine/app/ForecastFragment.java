@@ -2,6 +2,7 @@ package com.example.android.sunshine.app;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
@@ -22,6 +23,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.android.sunshine.app.database.WeatherContract;
@@ -31,9 +33,6 @@ import com.example.android.sunshine.app.database.WeatherContract;
  */
 public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final String TAG = ForecastFragment.class.getSimpleName();
-
-    private static final String PREF_LOCATION_DEFAULT_VALUE = "location";
-    public static final String DETAILS_EXTRAS = "weather";
 
     private static final int FORECAST_LOADER = 0;
     private static final int MY_PERMISSIONS_REQUEST_INTERNET = 1;
@@ -59,6 +58,18 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             WeatherContract.LocationEntry.COLUMN_COORD_LONG
     };
 
+    // These indices are tied to FORECAST_COLUMNS.  If FORECAST_COLUMNS changes, these
+    // must change.
+    static final int COL_WEATHER_ID = 0;
+    static final int COL_WEATHER_DATE = 1;
+    static final int COL_WEATHER_DESC = 2;
+    static final int COL_WEATHER_MAX_TEMP = 3;
+    static final int COL_WEATHER_MIN_TEMP = 4;
+    static final int COL_LOCATION_SETTING = 5;
+    static final int COL_WEATHER_CONDITION_ID = 6;
+    static final int COL_COORD_LAT = 7;
+    static final int COL_COORD_LONG = 8;
+
 
     public ForecastFragment() {
     }
@@ -79,16 +90,20 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         mListView = (ListView) rootView.findViewById(R.id.listView_forecast);
         mListView.setAdapter(mForecastAdapter);
 
-        /*mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // CursorAdapter returns a cursor at the correct position for getItem(), or null
+                // if it cannot seek to that position.
+                Cursor cursor = (Cursor) parent.getItemAtPosition(position);
+                String locationString = Utility.getPreferredLocation(getActivity());
                 //Create an intent to start the Detail Activity for a list item.
-                String forecast = (String) parent.getItemAtPosition(position);
-                Intent intent = new Intent(getActivity(), DetailActivity.class);
-                intent.putExtra(DETAILS_EXTRAS, forecast);
+                //Pass a URI with the necessary data to the Detail View.
+                Intent intent = new Intent(getActivity(), DetailActivity.class)
+                        .setData(WeatherContract.WeatherEntry.buildWeatherLocationWithDate(locationString, cursor.getLong(COL_WEATHER_DATE)));
                 startActivity(intent);
             }
-        });*/
+        });
 
         return rootView;
     }
@@ -100,21 +115,6 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         // will be called.
         getLoaderManager().initLoader(FORECAST_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
-
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        if (ContextCompat.checkSelfPermission(getActivity(),
-                Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED) {
-            updateWeather();
-        } else {
-            //Ask the user for internet permission.
-            ActivityCompat.requestPermissions(getActivity(),
-                    new String[]{Manifest.permission.READ_CONTACTS},
-                    MY_PERMISSIONS_REQUEST_INTERNET);
-        }
 
     }
 
@@ -200,5 +200,10 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         mForecastAdapter.swapCursor(null);
+    }
+
+    public void onLocationChanged() {
+        updateWeather();
+        getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
     }
 }

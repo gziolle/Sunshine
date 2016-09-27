@@ -14,21 +14,9 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        //Get the intent's extras.
-        Intent intent = getIntent();
-        Bundle bundle = new Bundle();
-
-
-        //If the intent exists and has extras, put them into a bundle.
-        if (intent != null && intent.hasExtra(ForecastFragment.DETAILS_EXTRAS)) {
-            String message = intent.getStringExtra(ForecastFragment.DETAILS_EXTRAS);
-            bundle.putString(ForecastFragment.DETAILS_EXTRAS, message);
-        }
-
         if (savedInstanceState == null) {
             //Set the bundle as the Detail Fragment's arguments
             DetailFragment fragment = new DetailFragment();
-            fragment.setArguments(bundle);
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, fragment)
                     .commit();

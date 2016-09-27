@@ -23,7 +23,11 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
+
     public static final String TAG = "MainActivity";
+    private static final String FORECASTFRAGMENT_TAG = "forecastFragment";
+    public static String mLocation;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,9 +36,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new ForecastFragment())
+                    .add(R.id.container, new ForecastFragment(), FORECASTFRAGMENT_TAG)
                     .commit();
         }
+        mLocation = Utility.getPreferredLocation(this);
     }
 
     @Override
@@ -42,6 +47,16 @@ public class MainActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
+    }
+
+    @Override
+    protected void onResume() {
+        if (!mLocation.equals(Utility.getPreferredLocation(this))) {
+            ForecastFragment ff = (ForecastFragment) getSupportFragmentManager().findFragmentByTag(FORECASTFRAGMENT_TAG);
+            ff.onLocationChanged();
+            mLocation = Utility.getPreferredLocation(this);
+        }
+        super.onResume();
     }
 
     @Override
