@@ -259,10 +259,10 @@ public class WeatherProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        // Student: Start by getting a writable database
+        // Start by getting a writable database
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 
-        // Student: Use the uriMatcher to match the WEATHER and LOCATION URI's we are going to
+        // Use the uriMatcher to match the WEATHER and LOCATION URI's we are going to
         // handle.  If it doesn't match these, throw an UnsupportedOperationException.
         int rowsCount = 0;
         switch (sUriMatcher.match(uri)) {
