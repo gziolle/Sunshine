@@ -21,25 +21,30 @@ import java.net.URI;
 import java.util.ArrayList;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ForecastFragment.Callback {
 
 
     public static final String TAG = "MainActivity";
     private static final String FORECASTFRAGMENT_TAG = "forecastFragment";
     public static String mLocation;
-
+    private static boolean mTwoPane;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new ForecastFragment(), FORECASTFRAGMENT_TAG)
-                    .commit();
-        }
         mLocation = Utility.getPreferredLocation(this);
+
+        if (findViewById(R.id.weather_detail_container) != null) {
+            mTwoPane = true;
+
+            if (savedInstanceState == null) {
+                getSupportFragmentManager().beginTransaction().replace(R.id.weather_detail_container, new DetailFragment()).commit();
+            }
+        } else {
+            mTwoPane = false;
+        }
     }
 
     @Override
@@ -51,10 +56,16 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        if (!mLocation.equals(Utility.getPreferredLocation(this))) {
+        String location = Utility.getPreferredLocation(this);
+        if (!mLocation.equals(location)) {
             ForecastFragment ff = (ForecastFragment) getSupportFragmentManager().findFragmentByTag(FORECASTFRAGMENT_TAG);
-            ff.onLocationChanged();
-            mLocation = Utility.getPreferredLocation(this);
+            if (ff != null)
+                ff.onLocationChanged();
+
+            DetailFragment df = (DetailFragment) getSupportFragmentManager().findFragmentByTag(DetailFragment.DETAIL_FRAGMENT_TAG);
+            if (df != null)
+                df.onLocationChanged(location);
+            mLocation = location;
         }
         super.onResume();
     }
@@ -90,5 +101,22 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onItemSelected(Uri dateUri) {
+        if (mTwoPane) {
+            Bundle args = new Bundle();
+            args.putParcelable(DetailFragment.DETAIL_URI, dateUri);
+
+            DetailFragment df = new DetailFragment();
+            df.setArguments(args);
+
+            getSupportFragmentManager().beginTransaction().replace(R.id.weather_detail_container, df, DetailFragment.DETAIL_FRAGMENT_TAG).commit();
+        } else {
+            Intent intent = new Intent(this, DetailActivity.class);
+            intent.setData(dateUri);
+            startActivity(intent);
+        }
     }
 }

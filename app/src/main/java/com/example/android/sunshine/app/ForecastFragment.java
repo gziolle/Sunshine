@@ -96,12 +96,10 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                 // CursorAdapter returns a cursor at the correct position for getItem(), or null
                 // if it cannot seek to that position.
                 Cursor cursor = (Cursor) parent.getItemAtPosition(position);
-                String locationString = Utility.getPreferredLocation(getActivity());
-                //Create an intent to start the Detail Activity for a list item.
-                //Pass a URI with the necessary data to the Detail View.
-                Intent intent = new Intent(getActivity(), DetailActivity.class)
-                        .setData(WeatherContract.WeatherEntry.buildWeatherLocationWithDate(locationString, cursor.getLong(COL_WEATHER_DATE)));
-                startActivity(intent);
+                if (cursor != null) {
+                    String locationString = Utility.getPreferredLocation(getActivity());
+                    ((Callback) getActivity()).onItemSelected(WeatherContract.WeatherEntry.buildWeatherLocationWithDate(locationString, cursor.getLong(COL_WEATHER_DATE)));
+                }
             }
         });
 
@@ -205,5 +203,17 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     public void onLocationChanged() {
         updateWeather();
         getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
+    }
+
+    /**
+     * A callback interface that all activities containing this fragment must
+     * implement. This mechanism allows activities to be notified of item
+     * selections.
+     */
+    public interface Callback {
+        /**
+         * DetailFragmentCallback for when an item has been selected.
+         */
+        void onItemSelected(Uri dateUri);
     }
 }

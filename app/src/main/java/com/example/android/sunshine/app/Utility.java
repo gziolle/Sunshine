@@ -127,4 +127,81 @@ public class Utility {
         String monthDayString = monthDayFormat.format(dateInMillis);
         return monthDayString;
     }
+
+    public static String getFormattedWind(Context context, float windSpeed, float degrees) {
+        int windFormat;
+        if (Utility.isMetric(context)) {
+            windFormat = R.string.format_wind_kmh;
+        } else {
+            windFormat = R.string.format_wind_mph;
+            windSpeed = .621371192237334f * windSpeed;
+        }
+
+        // From wind direction in degrees, determine compass direction as a string (e.g NW)
+        // You know what's fun, writing really long if/else statements with tons of possible
+        // conditions.  Seriously, try it!
+        String direction = "Unknown";
+        if (degrees >= 337.5 || degrees < 22.5) {
+            direction = "N";
+        } else if (degrees >= 22.5 && degrees < 67.5) {
+            direction = "NE";
+        } else if (degrees >= 67.5 && degrees < 112.5) {
+            direction = "E";
+        } else if (degrees >= 112.5 && degrees < 157.5) {
+            direction = "SE";
+        } else if (degrees >= 157.5 && degrees < 202.5) {
+            direction = "S";
+        } else if (degrees >= 202.5 && degrees < 247.5) {
+            direction = "SW";
+        } else if (degrees >= 247.5 && degrees < 292.5) {
+            direction = "W";
+        } else if (degrees >= 292.5 && degrees < 337.5) {
+            direction = "NW";
+        }
+        return String.format(context.getString(windFormat), windSpeed, direction);
+    }
+
+
+    /**
+     * Helper method to provide the icon or art resource id according to the weather condition id
+     * returned by the OpenWeatherMap call.
+     *
+     * @param weatherId from OpenWeatherMap API response
+     * @return resource id for the corresponding icon or art, or ic_launcher if no relation is found.
+     */
+    public static int getWeatherConditionImage(int weatherId, boolean isIcon, Context context) {
+        // Based on weather code data found at:
+        // http://bugs.openweathermap.org/projects/api/wiki/Weather_Condition_Codes
+        String resourceName = "ic_";
+        if (!isIcon) {
+            resourceName = "art_";
+        }
+        if (weatherId >= 200 && weatherId <= 232) {
+            resourceName += "storm";
+        } else if (weatherId >= 300 && weatherId <= 321) {
+            resourceName += "light_rain";
+        } else if (weatherId >= 500 && weatherId <= 504) {
+            resourceName += "rain";
+        } else if (weatherId == 511) {
+            resourceName += "snow";
+        } else if (weatherId >= 520 && weatherId <= 531) {
+            resourceName += "rain";
+        } else if (weatherId >= 600 && weatherId <= 622) {
+            resourceName += "snow";
+        } else if (weatherId >= 701 && weatherId <= 761) {
+            resourceName += "fog";
+        } else if (weatherId == 761 || weatherId == 781) {
+            resourceName += "storm";
+        } else if (weatherId == 800) {
+            resourceName += "clear";
+        } else if (weatherId == 801) {
+            resourceName += "light_clouds";
+        } else if (weatherId >= 802 && weatherId <= 804) {
+            resourceName += "clouds";
+        } else {
+            resourceName = "ic_launcher";
+        }
+
+        return context.getResources().getIdentifier(resourceName, "drawable", context.getPackageName());
+    }
 }

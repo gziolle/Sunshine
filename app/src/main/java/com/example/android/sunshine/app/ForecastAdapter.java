@@ -49,7 +49,15 @@ public class ForecastAdapter extends CursorAdapter {
 
         ViewHolder holder = (ViewHolder) view.getTag();
 
-        holder.icon.setImageResource(R.drawable.ic_launcher);
+        int weatherConditionId = cursor.getInt(ForecastFragment.COL_WEATHER_CONDITION_ID);
+
+        int position = cursor.getPosition();
+
+        if (position == TODAY_VIEW_ITEM) {
+            holder.icon.setImageResource(Utility.getWeatherConditionImage(weatherConditionId, false, mContext));
+        } else {
+            holder.icon.setImageResource(Utility.getWeatherConditionImage(weatherConditionId, true, mContext));
+        }
 
         long dateInMilli = cursor.getLong(ForecastFragment.COL_WEATHER_DATE);
 
@@ -115,7 +123,5 @@ public class ForecastAdapter extends CursorAdapter {
             highTextView = (TextView) view.findViewById(R.id.list_item_high_textview);
             lowTextView = (TextView) view.findViewById(R.id.list_item_low_textview);
         }
-
-
     }
 }
