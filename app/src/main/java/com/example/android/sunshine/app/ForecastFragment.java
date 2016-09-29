@@ -34,10 +34,12 @@ import com.example.android.sunshine.app.database.WeatherContract;
 public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final String TAG = ForecastFragment.class.getSimpleName();
 
+    private static final String LIST_POSITION = "LIST_POSITION";
     private static final int FORECAST_LOADER = 0;
     private static final int MY_PERMISSIONS_REQUEST_INTERNET = 1;
     public ForecastAdapter mForecastAdapter;
     public ListView mListView;
+    private int mSelectedPosition = -1;
 
 
     private static final String[] FORECAST_COLUMNS = {
@@ -81,10 +83,22 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        Log.d("Ziolle", "onCreateView: " + mSelectedPosition);
+        savedInstanceState.putInt(LIST_POSITION, mSelectedPosition);
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+
+        if (savedInstanceState != null) {
+            mSelectedPosition = savedInstanceState.getInt(LIST_POSITION);
+            Log.d("Ziolle", "onCreateView: " + mSelectedPosition);
+        }
 
         mForecastAdapter = new ForecastAdapter(getActivity(), null, 0);
         mListView = (ListView) rootView.findViewById(R.id.listView_forecast);
@@ -96,6 +110,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                 // CursorAdapter returns a cursor at the correct position for getItem(), or null
                 // if it cannot seek to that position.
                 Cursor cursor = (Cursor) parent.getItemAtPosition(position);
+                mSelectedPosition = position;
                 if (cursor != null) {
                     String locationString = Utility.getPreferredLocation(getActivity());
                     ((Callback) getActivity()).onItemSelected(WeatherContract.WeatherEntry.buildWeatherLocationWithDate(locationString, cursor.getLong(COL_WEATHER_DATE)));
@@ -192,6 +207,10 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        Log.d("Ziolle", "onLoadFinished: " + mSelectedPosition);
+        if (mSelectedPosition != -1) {
+            mListView.smoothScrollToPosition(mSelectedPosition);
+        }
         mForecastAdapter.swapCursor(data);
     }
 
