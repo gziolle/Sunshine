@@ -2,7 +2,6 @@ package com.example.android.sunshine.app;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
@@ -40,6 +39,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     public ForecastAdapter mForecastAdapter;
     public ListView mListView;
     private int mSelectedPosition = -1;
+    public CursorLoader mCursorLoader;
 
 
     private static final String[] FORECAST_COLUMNS = {
@@ -93,7 +93,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_forecast, container, false);
 
         if (savedInstanceState != null) {
             mSelectedPosition = savedInstanceState.getInt(LIST_POSITION);
@@ -190,6 +190,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             String locationPreference = Utility.getPreferredLocation(getActivity());
             //Start the AsyncTask related to the weather fetching.
             new FetchWeatherTask(getActivity()).execute(locationPreference);
+            Uri weatherForLocationUri = WeatherContract.WeatherEntry.buildWeatherLocationWithStartDate(locationPreference, System.currentTimeMillis());
+            mCursorLoader.setUri(weatherForLocationUri);
         } else {
             Log.e(TAG, "Can't connect to the internet");
         }
@@ -202,16 +204,17 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         //Sort order: ascending, by date.
         String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATE + " ASC";
         Uri weatherForLocationUri = WeatherContract.WeatherEntry.buildWeatherLocationWithStartDate(locationString, System.currentTimeMillis());
-        return new CursorLoader(getActivity(), weatherForLocationUri, FORECAST_COLUMNS, null, null, sortOrder);
+        mCursorLoader = new CursorLoader(getActivity(), weatherForLocationUri, FORECAST_COLUMNS, null, null, sortOrder);
+        return mCursorLoader;
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         Log.d("Ziolle", "onLoadFinished: " + mSelectedPosition);
+        mForecastAdapter.swapCursor(data);
         if (mSelectedPosition != -1) {
             mListView.smoothScrollToPosition(mSelectedPosition);
         }
-        mForecastAdapter.swapCursor(data);
     }
 
     @Override

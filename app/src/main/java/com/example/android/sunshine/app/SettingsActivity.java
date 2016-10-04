@@ -1,5 +1,8 @@
 package com.example.android.sunshine.app;
 
+import android.app.ActionBar;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.preference.PreferenceActivity;
 import android.os.Bundle;
 

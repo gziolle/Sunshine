@@ -107,7 +107,8 @@ public class Utility {
             time.setToNow();
             // Otherwise, the format is just the day of the week (e.g "Wednesday".
             SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE");
-            return dayFormat.format(dateInMillis);
+            String formattedDay = dayFormat.format(dateInMillis);
+            return formattedDay.substring(0, 1).toUpperCase() + formattedDay.substring(1);
         }
     }
 

@@ -17,6 +17,7 @@ public class ForecastAdapter extends CursorAdapter {
     private static Context mContext;
     private static final int TODAY_VIEW_ITEM = 0;
     private static final int FUTURE_VIEW_LIST_ITEM = 1;
+    private boolean mUseTodayLayout;
 
     public ForecastAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
@@ -53,7 +54,7 @@ public class ForecastAdapter extends CursorAdapter {
 
         int position = cursor.getPosition();
 
-        if (position == TODAY_VIEW_ITEM) {
+        if (position == TODAY_VIEW_ITEM && mUseTodayLayout) {
             holder.icon.setImageResource(Utility.getWeatherConditionImage(weatherConditionId, false, mContext));
         } else {
             holder.icon.setImageResource(Utility.getWeatherConditionImage(weatherConditionId, true, mContext));
@@ -79,35 +80,15 @@ public class ForecastAdapter extends CursorAdapter {
         return 2; // Today or Future list items.
     }
 
+    public void setUseTodayLayout(boolean useTodayLayout) {
+        mUseTodayLayout = useTodayLayout;
+    }
+
     @Override
     public int getItemViewType(int position) {
-        return (position == 0) ? TODAY_VIEW_ITEM : FUTURE_VIEW_LIST_ITEM;
+        return (position == 0 && mUseTodayLayout) ? TODAY_VIEW_ITEM : FUTURE_VIEW_LIST_ITEM;
     }
 
-    /**
-     * Prepare the weather high/lows for presentation.
-     */
-    private String formatHighLows(double high, double low) {
-//        boolean isMetric = Utility.isMetric(mContext);
-//        String highLowStr = Utility.formatTemperature(contehigh, isMetric) + "/" + Utility.formatTemperature(low, isMetric);
-//        return highLowStr;
-        return ";";
-    }
-
-    /*
-        This is ported from FetchWeatherTask --- but now we go straight from the cursor to the
-        string.
-     */
-    private String convertCursorRowToUXFormat(Cursor cursor) {
-
-        String highAndLow = formatHighLows(
-                cursor.getDouble(ForecastFragment.COL_WEATHER_MAX_TEMP),
-                cursor.getDouble(ForecastFragment.COL_WEATHER_MIN_TEMP));
-
-        return Utility.formatDate(cursor.getLong(ForecastFragment.COL_WEATHER_DATE)) +
-                " - " + cursor.getString(ForecastFragment.COL_WEATHER_DESC) +
-                " - " + highAndLow;
-    }
 
     public static class ViewHolder {
         ImageView icon;

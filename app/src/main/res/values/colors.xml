@@ -3,4 +3,8 @@
 
     <color name="grey">#cccccc</color>
     <color name="selected_blue">#96c6fc</color>
+    <color name="sunshine_blue">#ff1ca8f4</color>
+    <color name="sunshine_dark_blue">#0288D1</color>
+    <color name="white">#FFFFFF</color>
+
 </resources>
