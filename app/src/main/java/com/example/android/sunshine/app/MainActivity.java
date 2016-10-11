@@ -10,6 +10,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
+
 
 public class MainActivity extends AppCompatActivity implements ForecastFragment.Callback {
 
@@ -41,6 +43,8 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
         if (ff != null) {
             ff.mForecastAdapter.setUseTodayLayout(!mTwoPane);
         }
+
+        SunshineSyncAdapter.initializeSyncAdapter(this);
     }
 
     @Override

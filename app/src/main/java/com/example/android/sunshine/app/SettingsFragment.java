@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -66,6 +68,8 @@ public class SettingsFragment extends PreferenceFragment
             // For other preferences, set the summary to the value's simple string representation.
             preference.setSummary(stringValue);
         }
+        SunshineSyncAdapter adapter = new SunshineSyncAdapter(getActivity(), true);
+        SunshineSyncAdapter.syncImmediately(getActivity());
         return true;
     }
 }

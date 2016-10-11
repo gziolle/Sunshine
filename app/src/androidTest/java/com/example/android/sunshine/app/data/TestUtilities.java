@@ -10,8 +10,6 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.test.AndroidTestCase;
 
-import com.example.android.sunshine.app.database.WeatherContract;
-import com.example.android.sunshine.app.database.WeatherDBHelper;
 import com.example.android.sunshine.app.utils.PollingCheck;
 
 import java.util.Map;

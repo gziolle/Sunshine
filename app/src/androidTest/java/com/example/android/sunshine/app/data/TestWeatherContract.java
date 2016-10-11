@@ -18,8 +18,6 @@ package com.example.android.sunshine.app.data;
 import android.net.Uri;
 import android.test.AndroidTestCase;
 
-import com.example.android.sunshine.app.database.WeatherContract;
-
 /*
     Students: This is NOT a complete test for the WeatherContract --- just for the functions
     that we expect you to write.

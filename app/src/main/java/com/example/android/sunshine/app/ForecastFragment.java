@@ -25,7 +25,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.example.android.sunshine.app.database.WeatherContract;
+import com.example.android.sunshine.app.data.WeatherContract;
+import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
 
 /**
  * Created by Guilherme on 30/08/2016.
@@ -186,12 +187,29 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
         //Check if the internet permission is active.
         if (networkInfo != null && networkInfo.isConnected()) {
-            //Read the user's preference value.
+            /*//Read the user's preference value.
             String locationPreference = Utility.getPreferredLocation(getActivity());
             //Start the AsyncTask related to the weather fetching.
-            new FetchWeatherTask(getActivity()).execute(locationPreference);
+
+            Intent intent = new Intent(getActivity(), SunshineService.AlarmReceiver.class);
+            Intent sendIntent = new Intent(getActivity(), SunshineService.class);
+            intent.putExtra(LOCATION_QUERY_EXTRA, locationPreference);
+            sendIntent.putExtra(LOCATION_QUERY_EXTRA, locationPreference);
+
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(),0,intent,PendingIntent.FLAG_ONE_SHOT);
+            AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+            //Set the Alarm Manager to wake the system
+            alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5000, pendingIntent);
+
+            //getActivity().startService(sendIntent);
+            //new FetchWeatherTask(getActivity()).execute(locationPreference);
             Uri weatherForLocationUri = WeatherContract.WeatherEntry.buildWeatherLocationWithStartDate(locationPreference, System.currentTimeMillis());
-            mCursorLoader.setUri(weatherForLocationUri);
+            mCursorLoader.setUri(weatherForLocationUri);*/
+
+            SunshineSyncAdapter testAdapter = new SunshineSyncAdapter(getActivity(), true);
+            SunshineSyncAdapter.syncImmediately(getActivity());
+
+
         } else {
             Log.e(TAG, "Can't connect to the internet");
         }

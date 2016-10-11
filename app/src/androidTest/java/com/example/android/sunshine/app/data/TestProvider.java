@@ -27,10 +27,8 @@ import android.os.Build;
 import android.test.AndroidTestCase;
 import android.util.Log;
 
-import com.example.android.sunshine.app.database.WeatherContract.LocationEntry;
-import com.example.android.sunshine.app.database.WeatherContract.WeatherEntry;
-import com.example.android.sunshine.app.database.WeatherContract;
-import com.example.android.sunshine.app.database.WeatherDBHelper;
+import com.example.android.sunshine.app.data.WeatherContract.LocationEntry;
+import com.example.android.sunshine.app.data.WeatherContract.WeatherEntry;
 
 /*
     Note: This is not a complete set of tests of the Sunshine ContentProvider, but it does test

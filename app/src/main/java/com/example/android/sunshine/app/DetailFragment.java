@@ -21,7 +21,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.android.sunshine.app.database.WeatherContract;
+import com.example.android.sunshine.app.data.WeatherContract;
 
 //Fragment that deals with the "Details" activity.
 public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
