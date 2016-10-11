@@ -26,7 +26,9 @@
                 <TextView
                     android:id="@+id/list_item_date_textview"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-condensed"
+                    android:textSize="@dimen/date_text_view_size" />
             </LinearLayout>
 
             <LinearLayout
@@ -41,18 +43,24 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:layout_weight="1"
-                    android:layout_gravity="center">
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin">
 
                     <TextView
                         android:id="@+id/list_item_high_textview"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp" />
+                        android:fontFamily="sans-serif-light"
+                        android:textSize="@dimen/land_high_temperature_size" />
 
                     <TextView
                         android:id="@+id/list_item_low_textview"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-light"
+                        android:textSize="@dimen/land_low_temperature_size"
+                        android:textColor="@color/dark_grey"
+                        android:layout_marginLeft="@dimen/eight_padding" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -73,7 +81,10 @@
                         android:id="@+id/list_item_forecast_textview"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.2" />
+                        android:layout_weight="0.2"
+                        android:fontFamily="sans-serif-condensed"
+                        android:textAppearance="?android:textAppearanceLarge"
+                        android:textColor="@color/dark_grey" />
 
                 </LinearLayout>
 
@@ -89,18 +100,24 @@
                     android:id="@+id/detail_humidity_textview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp" />
+                    android:layout_marginBottom="@dimen/text_view_padding"
+                    android:fontFamily="sans-serif-condensed"
+                    android:textAppearance="?android:textAppearanceLarge" />
 
                 <TextView
                     android:id="@+id/detail_wind_textview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp" />
+                    android:layout_marginBottom="@dimen/text_view_padding"
+                    android:fontFamily="sans-serif-condensed"
+                    android:textAppearance="?android:textAppearanceLarge" />
 
                 <TextView
                     android:id="@+id/detail_pressure_textview"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-condensed"
+                    android:textAppearance="?android:textAppearanceLarge" />
 
             </LinearLayout>
 

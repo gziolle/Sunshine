@@ -214,6 +214,19 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         mForecastAdapter.swapCursor(data);
         if (mSelectedPosition != -1) {
             mListView.smoothScrollToPosition(mSelectedPosition);
+        } else {
+            Log.d(TAG, "else");
+            MainActivity activity = (MainActivity) getActivity();
+            if (activity.getTwoPaneMode()) {
+                Log.d(TAG, "activity.getTwoPaneMode()");
+                mListView.clearFocus();
+                mListView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mListView.setSelection(0);
+                    }
+                });
+            }
         }
     }
 

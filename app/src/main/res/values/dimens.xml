@@ -4,6 +4,21 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
 
     <dimen name="high_temperature_size">72sp</dimen>
+    <dimen name="land_high_temperature_size">96sp</dimen>
     <dimen name="low_temperature_size">36sp</dimen>
+    <dimen name="land_low_temperature_size">48sp</dimen>
+    <dimen name="land_list_view_text_size">20sp</dimen>
+    <dimen name="land_list_view_small_text_size">12sp</dimen>
+
+    <dimen name="text_view_padding">4dp</dimen>
+
+
+    <dimen name="land_date_width">180dp</dimen>
+    <dimen name="land_image_size">144dp</dimen>
+    <dimen name="land_detail_fragment_width">850dp</dimen>
+    <dimen name="land_list_fragment_width">430dp</dimen>
+    <dimen name="list_icon_width">65dp</dimen>
+    <dimen name="eight_padding">8dp</dimen>
+    <dimen name="date_text_view_size">24dp</dimen>
 
 </resources>
