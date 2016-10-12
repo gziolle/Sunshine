@@ -45,7 +45,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
     public final String LOG_TAG = SunshineSyncAdapter.class.getSimpleName();
     private static Context mContext;
 
-    public static final int SYNC_INTERVAL = 180;
+    public static final int SYNC_INTERVAL = 60 * 180;
     public static final int SYNC_FLEXTIME = SYNC_INTERVAL / 3;
 
     private static final long DAY_IN_MILLIS = 1000 * 60 * 60 * 24;

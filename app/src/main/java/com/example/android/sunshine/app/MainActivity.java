@@ -15,7 +15,6 @@ import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
 
 public class MainActivity extends AppCompatActivity implements ForecastFragment.Callback {
 
-
     public static final String TAG = "MainActivity";
     private static final String FORECASTFRAGMENT_TAG = "forecastFragment";
     public static String mLocation;
