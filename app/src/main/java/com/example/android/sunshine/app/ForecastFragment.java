@@ -40,7 +40,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     public ForecastAdapter mForecastAdapter;
     public ListView mListView;
     private int mSelectedPosition = -1;
-    public CursorLoader mCursorLoader;
+    public static CursorLoader mCursorLoader;
 
 
     private static final String[] FORECAST_COLUMNS = {
@@ -205,11 +205,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             //new FetchWeatherTask(getActivity()).execute(locationPreference);
             Uri weatherForLocationUri = WeatherContract.WeatherEntry.buildWeatherLocationWithStartDate(locationPreference, System.currentTimeMillis());
             mCursorLoader.setUri(weatherForLocationUri);*/
-
-            SunshineSyncAdapter testAdapter = new SunshineSyncAdapter(getActivity(), true);
             SunshineSyncAdapter.syncImmediately(getActivity());
-
-
         } else {
             Log.e(TAG, "Can't connect to the internet");
         }
@@ -218,6 +214,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     //Method that creates a new CursorLoader in required.
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        Log.d("Ziolle", "onCreateLoader");
         String locationString = Utility.getPreferredLocation(getActivity());
         //Sort order: ascending, by date.
         String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATE + " ASC";
@@ -228,15 +225,13 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        Log.d("Ziolle", "onLoadFinished: " + mSelectedPosition);
+        Log.d("Ziolle", "onLoadFinished");
         mForecastAdapter.swapCursor(data);
         if (mSelectedPosition != -1) {
             mListView.smoothScrollToPosition(mSelectedPosition);
         } else {
-            Log.d(TAG, "else");
             MainActivity activity = (MainActivity) getActivity();
             if (activity.getTwoPaneMode()) {
-                Log.d(TAG, "activity.getTwoPaneMode()");
                 mListView.clearFocus();
                 mListView.post(new Runnable() {
                     @Override
@@ -250,12 +245,14 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
+        Log.d("Ziolle", "onLoaderReset");
         mForecastAdapter.swapCursor(null);
     }
 
     public void onLocationChanged() {
         updateWeather();
         getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
+
     }
 
     /**

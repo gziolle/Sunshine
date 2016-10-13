@@ -2,6 +2,7 @@ package com.example.android.sunshine.app;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.android.sunshine.app.data.WeatherContract;
 import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
 
 
@@ -19,6 +21,15 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
     private static final String FORECASTFRAGMENT_TAG = "forecastFragment";
     public static String mLocation;
     private static boolean mTwoPane;
+
+    private String[] LOCATION_PROJECTION = {
+            WeatherContract.LocationEntry.COLUMN_COORD_LAT,
+            WeatherContract.LocationEntry.COLUMN_COORD_LONG
+    };
+
+    private int COLUMN_COORD_LAT = 0;
+    private int COLUMN_COORD_LONG = 1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,16 +97,26 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
             Intent intent = new Intent(Intent.ACTION_VIEW);
             //Get the user's preferred location through Shared Preferences.
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-            String userLocation = preferences.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default_value));
 
-            //Parse the user's location as a URI in order to send it to the Maps app.
-            //https://developer.android.com/guide/components/intents-common.html#Maps
-            Uri uri = Uri.parse("geo:0,0?").buildUpon().appendQueryParameter("q", userLocation).build();
-            intent.setData(uri);
+            String[] selectionArgs = new String[]{preferences.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default_value))};
+            Cursor cursor = getContentResolver().query(WeatherContract.LocationEntry.CONTENT_URI,
+                    LOCATION_PROJECTION, WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING + " = ?", selectionArgs, null);
 
-            //Error handling, in case the device does not have a Map app.
-            if (intent.resolveActivity(getPackageManager()) != null) {
-                startActivity(intent);
+            if (cursor.moveToFirst()) {
+                String userLocation = String.valueOf(cursor.getDouble(COLUMN_COORD_LAT)) + "," + String.valueOf(cursor.getDouble(COLUMN_COORD_LONG));
+                Log.e("Ziolle", userLocation);
+                //Parse the user's location as a URI in order to send it to the Maps app.
+                //https://developer.android.com/guide/components/intents-common.html#Maps
+                Uri uri = Uri.parse("geo:" + userLocation).buildUpon().build();
+                Log.e("Ziolle", uri.toString());
+                intent.setData(uri);
+
+                //Error handling, in case the device does not have a Map app.
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(intent);
+                }
+            } else {
+                Log.e("Ziolle", "error");
             }
         }
 

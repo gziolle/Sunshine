@@ -14,14 +14,12 @@ import android.widget.TextView;
  */
 public class ForecastAdapter extends CursorAdapter {
 
-    private static Context mContext;
     private static final int TODAY_VIEW_ITEM = 0;
     private static final int FUTURE_VIEW_LIST_ITEM = 1;
     private boolean mUseTodayLayout;
 
     public ForecastAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
-        mContext = context;
     }
 
     @Override
@@ -55,24 +53,24 @@ public class ForecastAdapter extends CursorAdapter {
         int position = cursor.getPosition();
 
         if (position == TODAY_VIEW_ITEM && mUseTodayLayout) {
-            holder.icon.setImageResource(Utility.getWeatherConditionImage(weatherConditionId, false, mContext));
+            holder.icon.setImageResource(Utility.getWeatherConditionImage(weatherConditionId, false, context));
         } else {
-            holder.icon.setImageResource(Utility.getWeatherConditionImage(weatherConditionId, true, mContext));
+            holder.icon.setImageResource(Utility.getWeatherConditionImage(weatherConditionId, true, context));
         }
 
         long dateInMilli = cursor.getLong(ForecastFragment.COL_WEATHER_DATE);
 
-        holder.dateTextView.setText(Utility.getFriendlyDayString(mContext, dateInMilli));
+        holder.dateTextView.setText(Utility.getFriendlyDayString(context, dateInMilli));
 
         holder.forecastTextView.setText(cursor.getString(ForecastFragment.COL_WEATHER_DESC));
 
-        boolean isMetric = Utility.isMetric(mContext);
+        boolean isMetric = Utility.isMetric(context);
 
         double high = cursor.getDouble(ForecastFragment.COL_WEATHER_MAX_TEMP);
-        holder.highTextView.setText(Utility.formatTemperature(mContext, high, isMetric));
+        holder.highTextView.setText(Utility.formatTemperature(context, high, isMetric));
 
         double low = cursor.getDouble(ForecastFragment.COL_WEATHER_MIN_TEMP);
-        holder.lowTextView.setText(Utility.formatTemperature(mContext, low, isMetric));
+        holder.lowTextView.setText(Utility.formatTemperature(context, low, isMetric));
     }
 
     @Override

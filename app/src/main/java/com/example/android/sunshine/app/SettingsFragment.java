@@ -68,7 +68,6 @@ public class SettingsFragment extends PreferenceFragment
             // For other preferences, set the summary to the value's simple string representation.
             preference.setSummary(stringValue);
         }
-        SunshineSyncAdapter adapter = new SunshineSyncAdapter(getActivity(), true);
         SunshineSyncAdapter.syncImmediately(getActivity());
         return true;
     }
