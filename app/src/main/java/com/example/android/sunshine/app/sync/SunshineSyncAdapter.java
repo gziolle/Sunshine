@@ -24,7 +24,6 @@ import android.support.v4.app.TaskStackBuilder;
 import android.text.format.Time;
 import android.util.Log;
 
-import com.example.android.sunshine.app.ForecastFragment;
 import com.example.android.sunshine.app.MainActivity;
 import com.example.android.sunshine.app.R;
 import com.example.android.sunshine.app.Utility;
@@ -71,7 +70,6 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
 
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
-        Log.d(LOG_TAG, "onPerformSync Called.");
         String locationQuery = Utility.getPreferredLocation(mContext);
 
         // These two need to be declared outside the try/catch
@@ -158,10 +156,6 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                 }
             }
         }
-
-        String locationPreference = Utility.getPreferredLocation(mContext);
-        Uri weatherForLocationUri = WeatherContract.WeatherEntry.buildWeatherLocationWithStartDate(locationPreference, System.currentTimeMillis());
-        ForecastFragment.mCursorLoader.setUri(weatherForLocationUri);
     }
 
     /**
@@ -507,5 +501,4 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
         }
 
     }
-
 }

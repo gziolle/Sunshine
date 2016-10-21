@@ -85,7 +85,6 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-        Log.d("Ziolle", "onCreateView: " + mSelectedPosition);
         savedInstanceState.putInt(LIST_POSITION, mSelectedPosition);
         super.onSaveInstanceState(savedInstanceState);
     }
@@ -98,7 +97,6 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
         if (savedInstanceState != null) {
             mSelectedPosition = savedInstanceState.getInt(LIST_POSITION);
-            Log.d("Ziolle", "onCreateView: " + mSelectedPosition);
         }
 
         mForecastAdapter = new ForecastAdapter(getActivity(), null, 0);
@@ -187,24 +185,6 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
         //Check if the internet permission is active.
         if (networkInfo != null && networkInfo.isConnected()) {
-            /*//Read the user's preference value.
-            String locationPreference = Utility.getPreferredLocation(getActivity());
-            //Start the AsyncTask related to the weather fetching.
-
-            Intent intent = new Intent(getActivity(), SunshineService.AlarmReceiver.class);
-            Intent sendIntent = new Intent(getActivity(), SunshineService.class);
-            intent.putExtra(LOCATION_QUERY_EXTRA, locationPreference);
-            sendIntent.putExtra(LOCATION_QUERY_EXTRA, locationPreference);
-
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(),0,intent,PendingIntent.FLAG_ONE_SHOT);
-            AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
-            //Set the Alarm Manager to wake the system
-            alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5000, pendingIntent);
-
-            //getActivity().startService(sendIntent);
-            //new FetchWeatherTask(getActivity()).execute(locationPreference);
-            Uri weatherForLocationUri = WeatherContract.WeatherEntry.buildWeatherLocationWithStartDate(locationPreference, System.currentTimeMillis());
-            mCursorLoader.setUri(weatherForLocationUri);*/
             SunshineSyncAdapter.syncImmediately(getActivity());
         } else {
             Log.e(TAG, "Can't connect to the internet");
@@ -214,7 +194,6 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     //Method that creates a new CursorLoader in required.
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Log.d("Ziolle", "onCreateLoader");
         String locationString = Utility.getPreferredLocation(getActivity());
         //Sort order: ascending, by date.
         String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATE + " ASC";
@@ -225,7 +204,6 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        Log.d("Ziolle", "onLoadFinished");
         mForecastAdapter.swapCursor(data);
         if (mSelectedPosition != -1) {
             mListView.smoothScrollToPosition(mSelectedPosition);
@@ -245,12 +223,14 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        Log.d("Ziolle", "onLoaderReset");
         mForecastAdapter.swapCursor(null);
     }
 
     public void onLocationChanged() {
+        //If it is requrred to fetch data from the server, try to update the weather data;
         updateWeather();
+        //Restart the Loader. it will bring the data from the database(if the data is recently synched, it will be inserted into the database
+        // before restarting the loader)
         getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
 
     }

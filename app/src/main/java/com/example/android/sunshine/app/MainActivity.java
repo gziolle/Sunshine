@@ -18,7 +18,6 @@ import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
 public class MainActivity extends AppCompatActivity implements ForecastFragment.Callback {
 
     public static final String TAG = "MainActivity";
-    private static final String FORECASTFRAGMENT_TAG = "forecastFragment";
     public static String mLocation;
     private static boolean mTwoPane;
 
@@ -33,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG, "onCreate");
+        Log.d("Ziolle", "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mLocation = Utility.getPreferredLocation(this);
@@ -68,9 +67,11 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
     protected void onResume() {
         String location = Utility.getPreferredLocation(this);
         if (!mLocation.equals(location)) {
-            ForecastFragment ff = (ForecastFragment) getSupportFragmentManager().findFragmentByTag(FORECASTFRAGMENT_TAG);
-            if (ff != null)
+            ForecastFragment ff = (ForecastFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_forecast);
+            if (ff != null) {
                 ff.onLocationChanged();
+            }
+
 
             DetailFragment df = (DetailFragment) getSupportFragmentManager().findFragmentByTag(DetailFragment.DETAIL_FRAGMENT_TAG);
             if (df != null)
@@ -104,11 +105,9 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
 
             if (cursor.moveToFirst()) {
                 String userLocation = String.valueOf(cursor.getDouble(COLUMN_COORD_LAT)) + "," + String.valueOf(cursor.getDouble(COLUMN_COORD_LONG));
-                Log.e("Ziolle", userLocation);
                 //Parse the user's location as a URI in order to send it to the Maps app.
                 //https://developer.android.com/guide/components/intents-common.html#Maps
                 Uri uri = Uri.parse("geo:" + userLocation).buildUpon().build();
-                Log.e("Ziolle", uri.toString());
                 intent.setData(uri);
 
                 //Error handling, in case the device does not have a Map app.
@@ -116,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
                     startActivity(intent);
                 }
             } else {
-                Log.e("Ziolle", "error");
+                Log.e(TAG, "error");
             }
         }
 

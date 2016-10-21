@@ -202,7 +202,6 @@ public class Utility {
         } else {
             resourceName = "ic_launcher";
         }
-
         return context.getResources().getIdentifier(resourceName, "drawable", context.getPackageName());
     }
 }

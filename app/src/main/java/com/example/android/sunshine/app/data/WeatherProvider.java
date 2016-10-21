@@ -23,7 +23,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
-import android.util.Log;
 
 public class WeatherProvider extends ContentProvider {
 
@@ -320,7 +319,6 @@ public class WeatherProvider extends ContentProvider {
 
     @Override
     public int bulkInsert(Uri uri, ContentValues[] values) {
-        Log.d("Ziolle", "values.length = " + values.length);
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
         switch (match) {
@@ -331,7 +329,6 @@ public class WeatherProvider extends ContentProvider {
                     for (ContentValues value : values) {
                         normalizeDate(value);
                         long _id = db.insert(WeatherContract.WeatherEntry.TABLE_NAME, null, value);
-                        Log.d("Ziolle", "_id = " + _id);
                         if (_id != -1) {
                             returnCount++;
                         }
