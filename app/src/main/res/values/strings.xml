@@ -11,15 +11,23 @@
     <string name="pref_location_key" translatable="false">location</string>
     <string name="pref_location_default_value" translatable="false">94043</string>
     <string name="pref_temperature_units_key" translatable="false">units</string>
-    <string name="pref_temperature_units_title">"Temperature Units"</string>
+    <string name="pref_temperature_units_title" translatable="false">"Temperature Units"</string>
     <string name="pref_temperature_units_default" translatable="false">metric</string>
-    <string name="pref_temperature_units_imperial">imperial</string>
+    <string name="pref_temperature_units_imperial" translatable="false">imperial</string>
     <string name="action_map">Check on Map</string>
     <string name="action_share">Share</string>
+    <string name="pref_last_sync_operation" translatable="false">lastSync</string>
+    <string name="empty_forecast_list_server_down">No weather information available. The server is not returning data.</string>
+    <string name="empty_forecast_list_server_error">No weather information available. The server is not returning valid data. Please check for an updated version of Sunshine.</string>
+    <string name="empty_forecast_list_server_invalid_location">No weather information available. The selected location does not exist.</string>
+
     <!-- Date label when displaying today's weather forecast [CHAR LIMIT=20] -->
     <string name="today">Today</string>
     <!-- Date label when displaying tomorrow's weather forecast [CHAR LIMIT=20] -->
     <string name="tomorrow">Tomorrow</string>
+
+    <string name="no_info_available">No Weather Information Available</string>
+    <string name="no_internet_connection">You are offline right now!</string>
 
     <!-- Date format for displaying day of week and date (i.e. Mon Jun 1) [CHAR LIMIT=20] -->
     <string name="format_full_friendly_date"><xliff:g id="day">%1$s</xliff:g>, <xliff:g id="date">%2$s</xliff:g></string>

@@ -33,6 +33,8 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d("Ziolle", "onCreate");
+        Log.d("Ziolle", WeatherContract.WeatherEntry.CONTENT_ITEM_TYPE);
+        Log.d("Ziolle", WeatherContract.WeatherEntry.CONTENT_TYPE);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mLocation = Utility.getPreferredLocation(this);

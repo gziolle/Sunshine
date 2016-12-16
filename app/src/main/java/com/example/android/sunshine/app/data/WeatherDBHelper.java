@@ -57,8 +57,8 @@ public class WeatherDBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         //Execute the SQL commands in order to create the Weather and Location tables.
-        db.execSQL(SQL_CREATE_WEATHER_TABLE);
         db.execSQL(SQL_CREATE_LOCATION_TABLE);
+        db.execSQL(SQL_CREATE_WEATHER_TABLE);
     }
 
     @Override

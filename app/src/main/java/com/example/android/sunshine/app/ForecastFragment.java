@@ -1,13 +1,12 @@
 package com.example.android.sunshine.app;
 
 import android.Manifest;
-import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -24,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.android.sunshine.app.data.WeatherContract;
 import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
@@ -31,18 +31,22 @@ import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
 /**
  * Created by Guilherme on 30/08/2016.
  */
-public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, SharedPreferences.OnSharedPreferenceChangeListener {
+    // These indices are tied to FORECAST_COLUMNS.  If FORECAST_COLUMNS changes, these
+    // must change.
+    static final int COL_WEATHER_ID = 0;
+    static final int COL_WEATHER_DATE = 1;
+    static final int COL_WEATHER_DESC = 2;
+    static final int COL_WEATHER_MAX_TEMP = 3;
+    static final int COL_WEATHER_MIN_TEMP = 4;
+    static final int COL_LOCATION_SETTING = 5;
+    static final int COL_WEATHER_CONDITION_ID = 6;
+    static final int COL_COORD_LAT = 7;
+    static final int COL_COORD_LONG = 8;
     private static final String TAG = ForecastFragment.class.getSimpleName();
-
     private static final String LIST_POSITION = "LIST_POSITION";
     private static final int FORECAST_LOADER = 0;
     private static final int MY_PERMISSIONS_REQUEST_INTERNET = 1;
-    public ForecastAdapter mForecastAdapter;
-    public ListView mListView;
-    private int mSelectedPosition = -1;
-    public static CursorLoader mCursorLoader;
-
-
     private static final String[] FORECAST_COLUMNS = {
             // In this case the id needs to be fully qualified with a table name, since
             // the content provider joins the location & weather tables in the background
@@ -60,18 +64,11 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             WeatherContract.LocationEntry.COLUMN_COORD_LAT,
             WeatherContract.LocationEntry.COLUMN_COORD_LONG
     };
-
-    // These indices are tied to FORECAST_COLUMNS.  If FORECAST_COLUMNS changes, these
-    // must change.
-    static final int COL_WEATHER_ID = 0;
-    static final int COL_WEATHER_DATE = 1;
-    static final int COL_WEATHER_DESC = 2;
-    static final int COL_WEATHER_MAX_TEMP = 3;
-    static final int COL_WEATHER_MIN_TEMP = 4;
-    static final int COL_LOCATION_SETTING = 5;
-    static final int COL_WEATHER_CONDITION_ID = 6;
-    static final int COL_COORD_LAT = 7;
-    static final int COL_COORD_LONG = 8;
+    public static CursorLoader mCursorLoader;
+    public ForecastAdapter mForecastAdapter;
+    public ListView mListView;
+    public TextView mEmptyView;
+    private int mSelectedPosition = -1;
 
 
     public ForecastFragment() {
@@ -127,7 +124,24 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         // will be called.
         getLoaderManager().initLoader(FORECAST_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
+        mEmptyView = (TextView) getActivity().findViewById(R.id.forecast_empty_view);
+        mListView.setEmptyView(mEmptyView);
 
+    }
+
+    @Override
+    public void onResume() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        prefs.registerOnSharedPreferenceChangeListener(this);
+        super.onResume();
+
+    }
+
+    @Override
+    public void onPause() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        prefs.unregisterOnSharedPreferenceChangeListener(this);
+        super.onPause();
     }
 
     @Override
@@ -173,18 +187,13 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                             new String[]{Manifest.permission.READ_CONTACTS},
                             MY_PERMISSIONS_REQUEST_INTERNET);
                 }
-                return;
             }
         }
     }
 
     public void updateWeather() {
-        //Make a check for internet connection before starting the task.
-        ConnectivityManager manager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = manager.getActiveNetworkInfo();
-
-        //Check if the internet permission is active.
-        if (networkInfo != null && networkInfo.isConnected()) {
+        //Make a check for internet connection before starting the sync.
+        if (Utility.isConnected(getActivity())) {
             SunshineSyncAdapter.syncImmediately(getActivity());
         } else {
             Log.e(TAG, "Can't connect to the internet");
@@ -219,6 +228,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                 });
             }
         }
+
+        updateEmptyView();
     }
 
     @Override
@@ -233,6 +244,40 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         // before restarting the loader)
         getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
 
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals(getString(R.string.pref_last_sync_operation))) {
+            updateEmptyView();
+        }
+    }
+
+    private void updateEmptyView() {
+        if (mForecastAdapter.getCount() == 0) {
+            TextView tv = (TextView) getView().findViewById(R.id.forecast_empty_view);
+            if (null != tv) {
+                // if cursor is empty, why? do we have an invalid location
+                int message = R.string.no_info_available;
+                @SunshineSyncAdapter.LocationStatus int location = Utility.getLocationStatus(getActivity());
+                switch (location) {
+                    case SunshineSyncAdapter.LOCATION_STATUS_SERVER_DOWN:
+                        message = R.string.empty_forecast_list_server_down;
+                        break;
+                    case SunshineSyncAdapter.LOCATION_STATUS_SERVER_INVALID:
+                        message = R.string.empty_forecast_list_server_error;
+                        break;
+                    case SunshineSyncAdapter.LOCATION_STATUS_INVALID:
+                        message = R.string.empty_forecast_list_server_invalid_location;
+                        break;
+                    default:
+                        if (!Utility.isConnected(getActivity())) {
+                            message = R.string.no_internet_connection;
+                        }
+                }
+                tv.setText(message);
+            }
+        }
     }
 
     /**
