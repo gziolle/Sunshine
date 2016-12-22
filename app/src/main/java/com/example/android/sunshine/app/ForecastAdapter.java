@@ -9,6 +9,8 @@ import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 /**
  * Created by gziolle on 9/22/2016.
  */
@@ -52,17 +54,26 @@ public class ForecastAdapter extends CursorAdapter {
 
         int position = cursor.getPosition();
 
+        int fallbackIconId;
+
         if (position == TODAY_VIEW_ITEM && mUseTodayLayout) {
-            holder.icon.setImageResource(Utility.getWeatherConditionImage(weatherConditionId, false, context));
+            fallbackIconId = Utility.getWeatherConditionImage(weatherConditionId, false, context);
         } else {
-            holder.icon.setImageResource(Utility.getWeatherConditionImage(weatherConditionId, true, context));
+            fallbackIconId = Utility.getWeatherConditionImage(weatherConditionId, true, context);
         }
+
+        Glide.with(context)
+                .load(Utility.getArtUrlForWeatherCondition(context, weatherConditionId))
+                .error(fallbackIconId)
+                .crossFade()
+                .into(holder.icon);
 
         long dateInMilli = cursor.getLong(ForecastFragment.COL_WEATHER_DATE);
 
         holder.dateTextView.setText(Utility.getFriendlyDayString(context, dateInMilli));
 
-        holder.forecastTextView.setText(cursor.getString(ForecastFragment.COL_WEATHER_DESC));
+        String description = Utility.getWeatherDescription(context, cursor.getString(ForecastFragment.COL_WEATHER_DESC));
+        holder.forecastTextView.setText(description);
 
         boolean isMetric = Utility.isMetric(context);
 
@@ -86,7 +97,6 @@ public class ForecastAdapter extends CursorAdapter {
     public int getItemViewType(int position) {
         return (position == 0 && mUseTodayLayout) ? TODAY_VIEW_ITEM : FUTURE_VIEW_LIST_ITEM;
     }
-
 
     public static class ViewHolder {
         ImageView icon;

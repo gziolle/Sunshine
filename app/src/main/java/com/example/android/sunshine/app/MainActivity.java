@@ -12,29 +12,28 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.android.sunshine.app.data.WeatherContract;
+import com.example.android.sunshine.app.gcm.RegistrationIntentService;
 import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 
 
 public class MainActivity extends AppCompatActivity implements ForecastFragment.Callback {
 
-    public static final String TAG = "MainActivity";
+    public static final String SENT_TOKEN_TO_SERVER = "sentTokenToServer";
+    private static final String TAG = "MainActivity";
+    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     public static String mLocation;
     private static boolean mTwoPane;
-
     private String[] LOCATION_PROJECTION = {
             WeatherContract.LocationEntry.COLUMN_COORD_LAT,
             WeatherContract.LocationEntry.COLUMN_COORD_LONG
     };
-
     private int COLUMN_COORD_LAT = 0;
     private int COLUMN_COORD_LONG = 1;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d("Ziolle", "onCreate");
-        Log.d("Ziolle", WeatherContract.WeatherEntry.CONTENT_ITEM_TYPE);
-        Log.d("Ziolle", WeatherContract.WeatherEntry.CONTENT_TYPE);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mLocation = Utility.getPreferredLocation(this);
@@ -56,6 +55,17 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
         }
 
         SunshineSyncAdapter.initializeSyncAdapter(this);
+
+        /*GCM - check to see if a token has already been sent to the server*/
+        if (checkPlayServices()) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+            boolean sentToken = preferences.getBoolean(SENT_TOKEN_TO_SERVER, false);
+
+            if (!sentToken) {
+                Intent intent = new Intent(this, RegistrationIntentService.class);
+                startService(intent);
+            }
+        }
     }
 
     @Override
@@ -143,5 +153,20 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
 
     public boolean getTwoPaneMode() {
         return mTwoPane;
+    }
+
+    private boolean checkPlayServices() {
+        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (apiAvailability.isUserResolvableError(resultCode)) {
+                apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            } else {
+                Log.i(TAG, "This device is not supported");
+                finish();
+            }
+            return false;
+        }
+        return true;
     }
 }

@@ -14,7 +14,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SyncRequest;
 import android.content.SyncResult;
+import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,6 +28,7 @@ import android.support.v4.app.TaskStackBuilder;
 import android.text.format.Time;
 import android.util.Log;
 
+import com.bumptech.glide.Glide;
 import com.example.android.sunshine.app.MainActivity;
 import com.example.android.sunshine.app.R;
 import com.example.android.sunshine.app.Utility;
@@ -43,6 +47,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Vector;
+import java.util.concurrent.ExecutionException;
 
 public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
 
@@ -210,8 +215,6 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                     .build();
 
             URL url = new URL(builtUri.toString());
-
-            Log.v(LOG_TAG, url.toString());
 
             // Create the request to OpenWeatherMap, and open the connection
             urlConnection = (HttpURLConnection) url.openConnection();
@@ -413,9 +416,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             // add to database
             if (cVVector.size() > 0) {
                 //Call bulkInsert to add the weatherEntries to the database here
-                Log.v(LOG_TAG, "vector size = " + cVVector.size());
                 ContentValues[] values = new ContentValues[cVVector.size()];
-                Log.v(LOG_TAG, "array size = " + values.length);
                 cVVector.toArray(values);
                 mContext.getContentResolver().bulkInsert(WeatherContract.WeatherEntry.CONTENT_URI, values);
             }
@@ -498,6 +499,33 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
 
 
                     int iconId = Utility.getWeatherConditionImage(weatherId, true, context);
+                    Resources resources = context.getResources();
+
+                    int artResourceId = Utility.getWeatherConditionImage(weatherId, false, context);
+                    String artUrl = Utility.getArtUrlForWeatherCondition(context, artResourceId);
+
+                    int largeIconWidth = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB
+                            ? resources.getDimensionPixelSize(android.R.dimen.notification_large_icon_width)
+                            : resources.getDimensionPixelSize(R.dimen.notification_large_icon_default);
+
+                    int largeIconHeight = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB
+                            ? resources.getDimensionPixelSize(android.R.dimen.notification_large_icon_height)
+                            : resources.getDimensionPixelSize(R.dimen.notification_large_icon_default);
+
+                    Bitmap largeIcon;
+
+                    try {
+                        largeIcon = Glide.with(context)
+                                .load(artUrl)
+                                .asBitmap()
+                                .error(artResourceId)
+                                .into(largeIconWidth, largeIconHeight)
+                                .get();
+
+                    } catch (InterruptedException | ExecutionException ex) {
+                        Log.e(LOG_TAG, "Error retrieving large icon from " + artUrl, ex);
+                        largeIcon = BitmapFactory.decodeResource(resources, artResourceId);
+                    }
 
                     String contentText = String.format(context.getString(R.string.format_notification),
                             description,
@@ -508,6 +536,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
 
                     NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
                             .setSmallIcon(iconId)
+                            .setLargeIcon(largeIcon)
                             .setContentTitle(context.getString(R.string.app_name))
                             .setContentText(contentText);
 

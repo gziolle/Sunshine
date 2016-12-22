@@ -21,23 +21,29 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.android.sunshine.app.data.WeatherContract;
 
 //Fragment that deals with the "Details" activity.
 public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    static final String DETAIL_URI = "URI";
+    static final String DETAIL_FRAGMENT_TAG = "DFTAG";
+    // These indices are tied to FORECAST_COLUMNS.  If FORECAST_COLUMNS changes, these
+    // must change.
+    static final int COL_WEATHER_ID = 0;
+    static final int COL_WEATHER_DATE = 1;
+    static final int COL_WEATHER_DESC = 2;
+    static final int COL_WEATHER_MAX_TEMP = 3;
+    static final int COL_WEATHER_MIN_TEMP = 4;
+    static final int COL_WEATHER_HUMIDITY = 5;
+    static final int COL_WEATHER_WIND_SPEED = 6;
+    static final int COL_WEATHER_PRESSURE = 7;
+    static final int COL_DEGREES = 8;
+    static final int COL_WEATHER_CONDITION_ID = 9;
     private static final int DETAIL_LOADER = 0;
     private static final String TAG = DetailFragment.class.getSimpleName();
     private static final String HASHTAG = "#SunshineApp";
-    static final String DETAIL_URI = "URI";
-    static final String DETAIL_FRAGMENT_TAG = "DFTAG";
-
-    private static String mForecastData;
-    private static ViewHolder mViewHolder;
-    private Uri mUri;
-
-    private ShareActionProvider mShareActionProvider;
-
     private static final String[] DETAILS_COLUMNS = {
             // In this case the id needs to be fully qualified with a table name, since
             // the content provider joins the location & weather tables in the background
@@ -56,19 +62,10 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             WeatherContract.WeatherEntry.COLUMN_DEGREES,
             WeatherContract.WeatherEntry.COLUMN_WEATHER_ID
     };
-
-    // These indices are tied to FORECAST_COLUMNS.  If FORECAST_COLUMNS changes, these
-    // must change.
-    static final int COL_WEATHER_ID = 0;
-    static final int COL_WEATHER_DATE = 1;
-    static final int COL_WEATHER_DESC = 2;
-    static final int COL_WEATHER_MAX_TEMP = 3;
-    static final int COL_WEATHER_MIN_TEMP = 4;
-    static final int COL_WEATHER_HUMIDITY = 5;
-    static final int COL_WEATHER_WIND_SPEED = 6;
-    static final int COL_WEATHER_PRESSURE = 7;
-    static final int COL_DEGREES = 8;
-    static final int COL_WEATHER_CONDITION_ID = 9;
+    private static String mForecastData;
+    private static ViewHolder mViewHolder;
+    private Uri mUri;
+    private ShareActionProvider mShareActionProvider;
 
     public DetailFragment() {
         // Required empty public constructor
@@ -157,13 +154,20 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
         int weatherConditionId = data.getInt(COL_WEATHER_CONDITION_ID);
 
-        mViewHolder.icon.setImageResource(Utility.getWeatherConditionImage(weatherConditionId, false, getActivity()));
+        //mViewHolder.icon.setImageResource(Utility.getWeatherConditionImage(weatherConditionId, false, getActivity()));
+        Glide.with(this)
+                .load(Utility.getArtUrlForWeatherCondition(getActivity(), weatherConditionId))
+                .error(Utility.getWeatherConditionImage(weatherConditionId, false, getActivity()))
+                .crossFade()
+                .fitCenter()
+                .into(mViewHolder.icon);
 
         long dateInMilli = data.getLong(COL_WEATHER_DATE);
 
         mViewHolder.dateTextView.setText(Utility.getFriendlyDayString(getActivity(), dateInMilli));
 
-        mViewHolder.forecastTextView.setText(data.getString(COL_WEATHER_DESC));
+        String description = Utility.getWeatherDescription(getActivity(), data.getString(COL_WEATHER_DESC));
+        mViewHolder.forecastTextView.setText(description);
 
         double high = data.getDouble(COL_WEATHER_MAX_TEMP);
         mViewHolder.highTextView.setText(Utility.formatTemperature(getActivity(), high, isMetric));
@@ -224,9 +228,9 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         TextView pressureTextView;
 
         public ViewHolder(View view) {
-            icon = (ImageView) view.findViewById(R.id.list_item_icon);
+            icon = (ImageView) view.findViewById(R.id.detail_icon);
             dateTextView = (TextView) view.findViewById(R.id.list_item_date_textview);
-            forecastTextView = (TextView) view.findViewById(R.id.list_item_forecast_textview);
+            forecastTextView = (TextView) view.findViewById(R.id.detail_forecast_textview);
             highTextView = (TextView) view.findViewById(R.id.list_item_high_textview);
             lowTextView = (TextView) view.findViewById(R.id.list_item_low_textview);
             humidityTextView = (TextView) view.findViewById(R.id.detail_humidity_textview);

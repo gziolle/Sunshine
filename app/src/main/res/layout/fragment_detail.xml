@@ -2,10 +2,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.android.sunshine.app.DetailFragment"
     android:orientation="vertical"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_horizontal_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin">
+    tools:context="com.example.android.sunshine.app.DetailFragment">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -13,15 +13,15 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:layout_marginBottom="@dimen/activity_horizontal_margin"
                 android:layout_weight="1"
-                android:layout_marginBottom="@dimen/activity_horizontal_margin">
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/list_item_date_textview"
@@ -34,17 +34,17 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:layout_marginBottom="@dimen/activity_horizontal_margin"
                 android:layout_weight="1"
-                android:layout_marginBottom="@dimen/activity_horizontal_margin">
+                android:orientation="horizontal">
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_weight="1"
                     android:layout_gravity="center"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin">
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/list_item_high_textview"
@@ -57,31 +57,30 @@
                         android:id="@+id/list_item_low_textview"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/eight_padding"
+                        android:layout_marginStart="@dimen/eight_padding"
                         android:fontFamily="sans-serif-light"
-                        android:textSize="@dimen/land_low_temperature_size"
                         android:textColor="@color/dark_grey"
-                        android:layout_marginLeft="@dimen/eight_padding" />
+                        android:textSize="@dimen/land_low_temperature_size" />
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
                     android:layout_weight="1"
-                    android:gravity="center_horizontal">
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
 
                     <ImageView
-                        android:id="@+id/list_item_icon"
-                        android:layout_width="wrap_content"
+                        android:id="@+id/detail_icon"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:paddingBottom="8dp"
-                        android:layout_weight="0.8" />
+                        android:adjustViewBounds="true" />
 
                     <TextView
-                        android:id="@+id/list_item_forecast_textview"
+                        android:id="@+id/detail_forecast_textview"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.2"
                         android:fontFamily="sans-serif-condensed"
                         android:textAppearance="?android:textAppearanceLarge"
                         android:textColor="@color/dark_grey" />
@@ -93,8 +92,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/detail_humidity_textview"
@@ -125,8 +124,8 @@
     </ScrollView>
 
     <TextView
+        android:id="@+id/weather"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/weather" />
+        android:layout_height="wrap_content" />
 
 </FrameLayout>

@@ -19,6 +19,8 @@
     <dimen name="land_list_fragment_width">430dp</dimen>
     <dimen name="list_icon_width">65dp</dimen>
     <dimen name="eight_padding">8dp</dimen>
-    <dimen name="date_text_view_size">24dp</dimen>
+    <dimen name="date_text_view_size">24sp</dimen>
+
+    <dimen name="notification_large_icon_default">48dp</dimen>
 
 </resources>

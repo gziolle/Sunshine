@@ -35,6 +35,7 @@ public class Utility {
         double temp;
         if (!isMetric) {
             temp = 9 * temperature / 5 + 32;
+            temp = 9 * temperature / 5 + 32;
         } else {
             temp = temperature;
         }
@@ -81,7 +82,7 @@ public class Utility {
             return getDayName(context, dateInMillis);
         } else {
             // Otherwise, use the form "Mon Jun 3"
-            SimpleDateFormat shortenedDateFormat = new SimpleDateFormat("EEE MMM dd");
+            SimpleDateFormat shortenedDateFormat = new SimpleDateFormat(context.getString(R.string.date_format));
             return shortenedDateFormat.format(dateInMillis);
         }
     }
@@ -107,11 +108,7 @@ public class Utility {
         } else if (julianDay == currentJulianDay + 1) {
             return context.getString(R.string.tomorrow);
         } else {
-            Time time = new Time();
-            time.setToNow();
-            // Otherwise, the format is just the day of the week (e.g "Wednesday".
-            SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE");
-            String formattedDay = dayFormat.format(dateInMillis);
+            String formattedDay = new SimpleDateFormat("EEEE", context.getResources().getConfiguration().locale).format(dateInMillis);
             return formattedDay.substring(0, 1).toUpperCase() + formattedDay.substring(1);
         }
     }
@@ -128,7 +125,7 @@ public class Utility {
         Time time = new Time();
         time.setToNow();
         SimpleDateFormat dbDateFormat = new SimpleDateFormat(Utility.DATE_FORMAT);
-        SimpleDateFormat monthDayFormat = new SimpleDateFormat("MMMM dd");
+        SimpleDateFormat monthDayFormat = (SimpleDateFormat) DateFormat.getDateInstance(DateFormat.MEDIUM);
         String monthDayString = monthDayFormat.format(dateInMillis);
         return monthDayString;
     }
@@ -230,5 +227,58 @@ public class Utility {
 
         editor.putInt(context.getString(R.string.pref_last_sync_operation), SunshineSyncAdapter.LOCATION_STATUS_UNKNOWN);
         editor.apply();
+    }
+
+    static String getWeatherDescription(Context context, String serverValue) {
+        if ("rain".equalsIgnoreCase(serverValue)) {
+            return context.getString(R.string.rain);
+        } else if ("clouds".equalsIgnoreCase(serverValue)) {
+            return context.getString(R.string.clouds);
+        } else if ("clear".equalsIgnoreCase(serverValue)) {
+            return context.getString(R.string.clear);
+        } else {
+            return serverValue;
+        }
+    }
+
+    /**
+     * Helper method to provide the art urls according to the weather condition id returned
+     * by the OpenWeatherMap call.
+     *
+     * @param context   Context to use for retrieving the URL format
+     * @param weatherId from OpenWeatherMap API response
+     * @return url for the corresponding weather artwork. null if no relation is found.
+     */
+    public static String getArtUrlForWeatherCondition(Context context, int weatherId) {
+        // Based on weather code data found at:
+        // http://bugs.openweathermap.org/projects/api/wiki/Weather_Condition_Codes
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String artPack = preferences.getString(context.getString(R.string.pref_art_pack_key), context.getString(R.string.pref_art_pack_sunshine));
+
+        if (weatherId >= 200 && weatherId <= 232) {
+            return String.format(artPack, "storm");
+        } else if (weatherId >= 300 && weatherId <= 321) {
+            return String.format(artPack, "light_rain");
+        } else if (weatherId >= 500 && weatherId <= 504) {
+            return String.format(artPack, "rain");
+        } else if (weatherId == 511) {
+            return String.format(artPack, "snow");
+        } else if (weatherId >= 520 && weatherId <= 531) {
+            return String.format(artPack, "rain");
+        } else if (weatherId >= 600 && weatherId <= 622) {
+            return String.format(artPack, "snow");
+        } else if (weatherId >= 701 && weatherId <= 761) {
+            return String.format(artPack, "fog");
+        } else if (weatherId == 761 || weatherId == 781) {
+            return String.format(artPack, "storm");
+        } else if (weatherId == 800) {
+            return String.format(artPack, "clear");
+        } else if (weatherId == 801) {
+            return String.format(artPack, "light_clouds");
+        } else if (weatherId >= 802 && weatherId <= 804) {
+            return String.format(artPack, "clouds");
+        }
+        return null;
     }
 }
