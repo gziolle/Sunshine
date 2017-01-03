@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_pressed="true" android:color="@color/sunshine_dark_blue" /> <!-- pressed -->
-    <item android:state_activated="true" android:drawable="@color/sunshine_dark_blue" /> <!-- activated -->
+    <item android:color="@color/primary_dark" android:state_pressed="true" /> <!-- pressed -->
+    <item android:drawable="@color/primary_dark" android:state_activated="true" /> <!-- activated -->
 
-    <item android:drawable="@color/sunshine_blue" /> <!-- default -->
+    <item android:drawable="@color/primary" /> <!-- default -->
 </selector>

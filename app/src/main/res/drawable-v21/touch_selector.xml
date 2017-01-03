@@ -3,7 +3,7 @@
     <item android:state_pressed="true">
         <ripple android:color="@color/grey" />
     </item> <!-- pressed -->
-    <item android:state_activated="true" android:drawable="@color/selected_blue" /> <!-- activated -->
+    <item android:drawable="@color/primary_light" android:state_activated="true" /> <!-- activated -->
 
-    <item android:drawable="@android:color/white" /> <!-- default -->
+    <item android:drawable="@android:color/transparent" /> <!-- default -->
 </selector>
