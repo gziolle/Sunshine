@@ -5,5 +5,5 @@
     </item> <!-- pressed -->
     <item android:drawable="@color/primary_light" android:state_activated="true" /> <!-- activated -->
 
-    <item android:drawable="@android:color/transparent" /> <!-- default -->
+    <item android:drawable="@android:color/white" /> <!-- default -->
 </selector>
