@@ -168,12 +168,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
         mViewHolder.dateTextView.setText(friendlyDayString);
 
-        int index = friendlyDayString.indexOf(",");
-
-        if (index == -1) {
-            mViewHolder.fullDateTextView.setText(Utility.getFormattedMonthDay(getActivity(), dateInMilli));
-        }
-
         String description = Utility.getWeatherDescription(getActivity(), data.getString(COL_WEATHER_DESC));
         mViewHolder.forecastTextView.setText(description);
 
@@ -228,7 +222,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     public static class ViewHolder {
         ImageView icon;
         TextView dateTextView;
-        TextView fullDateTextView;
         TextView forecastTextView;
         TextView highTextView;
         TextView lowTextView;
@@ -238,11 +231,10 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
         public ViewHolder(View view) {
             icon = (ImageView) view.findViewById(R.id.detail_icon);
-            dateTextView = (TextView) view.findViewById(R.id.list_item_date_textview);
-            fullDateTextView = (TextView) view.findViewById(R.id.list_item_full_date_textview);
+            dateTextView = (TextView) view.findViewById(R.id.detail_date_textview);
             forecastTextView = (TextView) view.findViewById(R.id.detail_forecast_textview);
-            highTextView = (TextView) view.findViewById(R.id.list_item_high_textview);
-            lowTextView = (TextView) view.findViewById(R.id.list_item_low_textview);
+            highTextView = (TextView) view.findViewById(R.id.detail_high_textview);
+            lowTextView = (TextView) view.findViewById(R.id.detail_low_textview);
             humidityTextView = (TextView) view.findViewById(R.id.detail_humidity_textview);
             windTextView = (TextView) view.findViewById(R.id.detail_wind_textview);
             pressureTextView = (TextView) view.findViewById(R.id.detail_pressure_textview);
