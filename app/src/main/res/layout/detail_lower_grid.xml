@@ -26,9 +26,8 @@
         android:text="@string/humidity"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
         android:textColor="@color/detail_accent_label"
-        app:layout_columnWeight="2"
-        app:layout_gravity="fill"
-        app:layout_rowWeight="1" />
+        app:layout_columnWeight="1"
+        app:layout_rowWeight="1.5" />
 
     <TextView
         android:id="@+id/detail_humidity_textview"
@@ -40,7 +39,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Headline"
         android:textColor="@android:color/white"
         app:layout_columnWeight="1"
-        app:layout_gravity="fill"
+        app:layout_rowWeight="1"
         tools:text="38%" />
 
     <TextView
@@ -54,21 +53,24 @@
         android:text="@string/pressure"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
         android:textColor="@color/detail_accent_label"
-        app:layout_columnWeight="2"
-        app:layout_gravity="fill"
-        app:layout_rowWeight="1" />
+        app:layout_columnWeight="1"
+        app:layout_rowWeight="1.5" />
 
     <TextView
         android:id="@+id/detail_pressure_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:textAppearance="@style/TextAppearance.AppCompat.Headline"
         android:textColor="@android:color/white"
         app:layout_columnWeight="1"
-        app:layout_gravity="fill"
+        app:layout_rowWeight="1"
         tools:text="995 hPa" />
 
     <TextView
         android:id="@+id/detail_wind_label_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:fontFamily="sans-serif"
         android:gravity="center_vertical"
         android:paddingEnd="@dimen/forecast_detail_horizontal_padding"
@@ -76,17 +78,18 @@
         android:text="@string/wind"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
         android:textColor="@color/detail_accent_label"
-        app:layout_columnWeight="2"
-        app:layout_gravity="fill"
-        app:layout_rowWeight="1" />
+        app:layout_columnWeight="1"
+        app:layout_rowWeight="1.5" />
 
     <TextView
         android:id="@+id/detail_wind_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:textAppearance="@style/TextAppearance.AppCompat.Headline"
         android:textColor="@android:color/white"
         app:layout_columnWeight="1"
-        app:layout_gravity="fill"
+        app:layout_rowWeight="1"
         tools:text="4km/h NW" />
 
 </android.support.v7.widget.GridLayout>

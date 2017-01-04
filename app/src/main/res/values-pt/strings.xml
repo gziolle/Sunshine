@@ -6,10 +6,10 @@
     <string name="empty_forecast_list_server_down">As informações sobre o clima não estão disponíveis. O servidor não enviiou infomações.</string>
     <string name="empty_forecast_list_server_error">As informações sobre o clima não estão disponíveis. O servidor não enviiou infomações. Por favor, atualize seu aplicativo.</string>
     <string name="empty_forecast_list_server_invalid_location">As informações sobre o clima não estão disponíveis. O local escolhido não existe.</string>
-    <string name="format_humidity">Humidade: <xliff:g id="humidity">%1.0f</xliff:g> %%</string>
-    <string name="format_pressure">Pressão: <xliff:g id="pressure">%1.0f</xliff:g> hPa</string>
-    <string name="format_wind_kmh">Vento: <xliff:g id="speed">%1$1.0f</xliff:g> km/h <xliff:g id="direction">%2$s</xliff:g></string>
-    <string name="format_wind_mph">"Vento: <xliff:g id="speed">%1$1.0f</xliff:g> mph <xliff:g id="direction">%2$s</xliff:g>  "</string>
+    <string name="format_humidity"><xliff:g id="humidity">%1.0f</xliff:g> %%</string>
+    <string name="format_pressure"><xliff:g id="pressure">%1.0f</xliff:g> hPa</string>
+    <string name="format_wind_kmh"><xliff:g id="speed">%1$1.0f</xliff:g> km/h <xliff:g id="direction">%2$s</xliff:g></string>
+    <string name="format_wind_mph"><xliff:g id="speed">%1$1.0f</xliff:g> mph <xliff:g id="direction">%2$s</xliff:g></string>
     <string name="no_info_available">As informações sobre o clima não estão disponíveis.</string>
     <string name="no_internet_connection">As informações sobre o clima não estão disponíveis. Você está offline!</string>
     <string name="title_activity_detail">Detalhes</string>
@@ -25,6 +25,10 @@
     <string name="pref_enable_notifications_label">Notificações de previsão do clima</string>
     <string name="pref_temperature_units_title">Unidade de temperatura</string>
     <string name="date_format">EEE, dd MMM</string>
+
+    <string name="pressure">Pressão</string>
+    <string name="humidity">Humidade</string>
+    <string name="wind">Vento</string>
 
     <string name="clear">Céu claro</string>
     <string name="clouds">Nublado</string>
