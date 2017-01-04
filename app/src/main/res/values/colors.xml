@@ -17,5 +17,9 @@
     <color name="detail_accent_pane_background">#455A64</color>
     <color name="detail_accent_label">#90A4AE</color>
 
+    <color name="list_item_default">#ECEFF1</color>
+    <color name="list_item_pressed">#78909C</color>
+    <color name="list_item_selected">#B0BEC5</color>
+
 
 </resources>

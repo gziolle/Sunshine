@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_pressed="true">
-        <ripple android:color="@color/primary_dark" />
+        <ripple android:color="@color/grey" />
     </item> <!-- pressed -->
 
-    <item android:drawable="@color/primary_dark" android:state_activated="true" /> <!-- activated -->
+    <item android:drawable="@color/primary_light" android:state_activated="true" /> <!-- activated -->
 
-    <item android:drawable="@color/primary" /> <!-- default -->
+    <item android:drawable="@color/white" /> <!-- default -->
 </selector>
