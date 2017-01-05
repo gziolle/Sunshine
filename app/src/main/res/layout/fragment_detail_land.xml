@@ -48,8 +48,8 @@
                 android:text="@string/humidity"
                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
                 android:textColor="@color/detail_accent_label"
-                app:layout_columnWeight="2"
-                app:layout_gravity="fill"
+                app:layout_columnWeight="1"
+                app:layout_gravity="center_horizontal"
                 app:layout_rowWeight="1" />
 
             <TextView
@@ -76,7 +76,7 @@
                 android:text="@string/pressure"
                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
                 android:textColor="@color/detail_accent_label"
-                app:layout_columnWeight="2"
+                app:layout_columnWeight="1"
                 app:layout_gravity="fill"
                 app:layout_rowWeight="1" />
 
@@ -98,7 +98,7 @@
                 android:text="@string/wind"
                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
                 android:textColor="@color/detail_accent_label"
-                app:layout_columnWeight="2"
+                app:layout_columnWeight="1"
                 app:layout_gravity="fill"
                 app:layout_rowWeight="1" />
 

@@ -209,7 +209,12 @@ public class Utility {
     public static boolean isConnected(Context context) {
         ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = manager.getActiveNetworkInfo();
-        return networkInfo != null & networkInfo.isConnected();
+
+        try {
+            return networkInfo != null & networkInfo.isConnected();
+        } catch (NullPointerException ex) {
+            return false;
+        }
     }
 
 

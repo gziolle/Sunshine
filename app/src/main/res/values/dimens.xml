@@ -40,4 +40,8 @@
 
     <dimen name="appbar_elevation">4dp</dimen>
 
+    <dimen name="details_app_bar_overlap">24dp</dimen>
+
+    <dimen name="list_item_extra_padding">0dp</dimen>
+
 </resources>

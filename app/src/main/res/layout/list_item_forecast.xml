@@ -3,8 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/touch_selector"
-    android:minHeight="?android:attr/listPreferredItemHeight"
-    android:orientation="horizontal">
+    android:minHeight="?attr/listPreferredItemHeight"
+    android:orientation="horizontal"
+    android:paddingLeft="@dimen/list_item_extra_padding"
+    android:paddingRight="@dimen/list_item_extra_padding">
 
     <LinearLayout
         android:layout_width="@dimen/list_icon_width"
@@ -14,7 +16,7 @@
         <ImageView
             android:id="@+id/list_item_icon"
             android:layout_width="40dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:adjustViewBounds="true" />
     </LinearLayout>
 
@@ -45,8 +47,10 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="5"
-        android:gravity="center"
-        android:orientation="horizontal">
+        android:gravity="center_vertical|end"
+        android:orientation="horizontal"
+        android:paddingEnd="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin">
 
         <TextView
             android:id="@+id/list_item_high_textview"
@@ -54,6 +58,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/forecast_temperature_space"
             android:layout_marginRight="@dimen/forecast_temperature_space"
+            android:gravity="end"
             android:textAppearance="@style/TextAppearance.AppCompat.Headline"
             android:textColor="@color/primary_text"
             android:textSize="@dimen/forecast_text_size" />
